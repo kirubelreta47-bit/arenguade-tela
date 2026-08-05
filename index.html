@@ -1889,28 +1889,18 @@
       }
 
       .luxury-grid {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory;
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 24px;
-        padding: 16px 8px 32px;
+        max-width: 1200px;
         margin: 0 auto;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
         transition: opacity 0.3s ease, transform 0.3s ease;
       }
 
-      .luxury-grid::-webkit-scrollbar {
-        height: 6px;
-      }
-      .luxury-grid::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 4px;
-      }
-      .luxury-grid::-webkit-scrollbar-thumb {
-        background: #E2B755;
-        border-radius: 4px;
+      @media(min-width: 900px) {
+        .luxury-grid {
+          grid-template-columns: 1fr 1fr;
+        }
       }
 
       .luxury-card {
@@ -1921,10 +1911,6 @@
         border-radius: 16px;
         overflow: hidden;
         transition: all 0.3s ease;
-        flex: 0 0 320px !important;
-        min-width: 320px !important;
-        max-width: 340px !important;
-        scroll-snap-align: start;
       }
 
       @media(min-width: 600px) {
