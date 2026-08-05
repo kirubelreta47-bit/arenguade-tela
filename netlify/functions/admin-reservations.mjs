@@ -4,15 +4,55 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin_secret_token_123';
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-async function notifyTelegram(message) {
-    if (!BOT_TOKEN || !CHAT_ID) return;
+async function notifyTelegramUsers(reservation, newStatus) {
+    if (!BOT_TOKEN) return;
+
+    const chatIds = new Set();
+    if (CHAT_ID) chatIds.add(String(CHAT_ID));
+
+    // Fetch updates to get all user chat IDs who started/messaged the bot
     try {
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
-        });
-    } catch (e) {}
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.ok && Array.isArray(data.result)) {
+                for (const update of data.result) {
+                    const id = update.message?.chat?.id || update.my_chat_member?.chat?.id;
+                    if (id) chatIds.add(String(id));
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error fetching Telegram updates:', e);
+    }
+
+    const statusUpper = newStatus.toUpperCase();
+    let msg = '';
+
+    if (newStatus === 'confirmed') {
+        msg = `🎉 <b>RESERVATION CONFIRMED!</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation at <b>Arenguade Tela Cafe & Restaurant</b> has been <b>CONFIRMED</b>!\n\n📅 <b>Date:</b> ${reservation.date} ${reservation.time || ''}\n👥 <b>Guests:</b> ${reservation.guests || '1'}\n🔑 <b>Code:</b> <code>${reservation.unique_code || 'N/A'}</code>\n\nWe look forward to hosting you!`;
+    } else if (newStatus === 'declined' || newStatus === 'cancelled') {
+        msg = `❌ <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation request for <b>${reservation.date} ${reservation.time || ''}</b> has been <b>${statusUpper}</b>.\n\nPlease contact us directly if you have any questions.`;
+    } else {
+        msg = `🔄 <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour reservation status is now: <b>${statusUpper}</b>.`;
+    }
+
+    // Send confirmation message to all bot users + admin
+    for (const id of chatIds) {
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: id,
+                    text: msg,
+                    parse_mode: 'HTML'
+                })
+            });
+        } catch (e) {
+            console.error(`Failed to send message to Telegram chat ${id}:`, e);
+        }
+    }
 }
 
 export const handler = async (event) => {
@@ -55,7 +95,7 @@ export const handler = async (event) => {
         await saveReservations(reservations);
 
         if (oldStatus !== newStatus) {
-            await notifyTelegram(`🔄 <b>Reservation Update</b>\n\n${reservations[index].name}'s reservation is now: <b>${newStatus.toUpperCase()}</b>`);
+            await notifyTelegramUsers(reservations[index], newStatus);
         }
 
         return { statusCode: 200, headers, body: JSON.stringify({ success: true, reservation: reservations[index] }) };
