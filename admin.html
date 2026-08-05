@@ -713,17 +713,15 @@
     async function updateStatus(id) {
       const status = document.getElementById(`status-${id}`).value;
       try {
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetch(`${API_URL}?id=${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
           body: JSON.stringify({ status })
         });
 
-        
         if(res.ok) {
           const index = allData.findIndex(r => r.id === id);
           if(index !== -1) allData[index].status = status;
-          
           updateStats();
           renderGrid();
           showToast('Reservation status updated!');
@@ -736,7 +734,7 @@
     async function deleteReservation(id) {
       if (!confirm('Are you sure you want to permanently delete this reservation?')) return;
       try {
-        const res = await fetch(`${API_URL}/${id}`, { 
+        const res = await fetch(`${API_URL}?id=${id}`, { 
           method: 'DELETE',
           headers: { 'x-api-key': API_KEY }
         });
