@@ -412,13 +412,13 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 900px;
-      padding: 0;
+      max-width: 760px;
+      padding: 0 20px;
     }
 
     .hero h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(52px, 8.5vw, 105px);
+      font-size: clamp(48px, 8vw, 95px);
       margin: 0 auto 16px;
       line-height: 1.1;
       font-weight: 600;
@@ -434,16 +434,23 @@
       font-size: clamp(15px, 1.8vw, 17px);
       color: rgba(255, 255, 255, 0.85);
       font-weight: 300;
-      max-width: 550px;
+      max-width: 480px;
       margin: 0 auto 32px;
-      line-height: 1.8;
+      line-height: 1.6;
       text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
     }
 
     .hero-frame {
       position: relative;
-      padding: 50px 30px;
-      margin-bottom: 40px;
+      padding: 60px 40px;
+      margin: 0 24px 40px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-frame {
+        padding: 40px 20px;
+        margin: 0 12px 30px;
+      }
     }
 
     .hero-frame::before {
@@ -1408,8 +1415,7 @@
 
             <h1>More Than Just a Meal</h1>
 
-            <p>From the first pour of coffee to the last plate cleared, Arenguade Tila is built around one idea: gather,
-              slow down, and eat well together.</p>
+            <p>Gather, slow down, and eat well together.</p>
 
             <div style="display:flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
               <a href="#" onclick="navigateTo('view-reservations'); return false;" class="btn pulse-btn"
@@ -1835,14 +1841,25 @@
         top: 80px;
         z-index: 50;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
         gap: 12px;
-        padding: 20px 0;
+        padding: 16px 12px;
         background: rgba(11, 14, 20, 0.85);
         backdrop-filter: blur(10px);
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .luxury-tab-wrap::-webkit-scrollbar {
+        height: 4px;
+      }
+      .luxury-tab-wrap::-webkit-scrollbar-thumb {
+        background: var(--g);
+        border-radius: 4px;
       }
 
       .luxury-tab {
@@ -1856,6 +1873,8 @@
         cursor: pointer;
         transition: all 0.3s ease;
         letter-spacing: 0.5px;
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
 
       .luxury-tab:hover {
@@ -1869,18 +1888,29 @@
         box-shadow: 0 0 15px rgba(226, 183, 85, 0.2);
       }
 
-      .luxury-grid {
-        display: grid;
-        grid-template-columns: 1fr;
+      .luxury-grid, #menuGrid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
         gap: 24px;
-        max-width: 1200px;
+        padding: 16px 8px 32px;
         margin: 0 auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        transition: opacity 0.3s ease, transform 0.3s ease;
       }
 
-      @media(min-width: 900px) {
-        .luxury-grid {
-          grid-template-columns: 1fr 1fr;
-        }
+      .luxury-grid::-webkit-scrollbar, #menuGrid::-webkit-scrollbar {
+        height: 6px;
+      }
+      .luxury-grid::-webkit-scrollbar-track, #menuGrid::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+      .luxury-grid::-webkit-scrollbar-thumb, #menuGrid::-webkit-scrollbar-thumb {
+        background: #E2B755;
+        border-radius: 4px;
       }
 
       .luxury-card {
@@ -1891,6 +1921,10 @@
         border-radius: 16px;
         overflow: hidden;
         transition: all 0.3s ease;
+        flex: 0 0 320px !important;
+        min-width: 320px !important;
+        max-width: 340px !important;
+        scroll-snap-align: start;
       }
 
       @media(min-width: 600px) {
@@ -2407,7 +2441,19 @@
 
     function switchFullTab(t) {
       fullMenuActiveTab = t;
-      renderFullMenu();
+      var gridCont = document.getElementById('fullMenuGrid');
+      if (gridCont) {
+        gridCont.style.opacity = '0.3';
+        gridCont.style.transform = 'translateY(6px)';
+        setTimeout(() => {
+          renderFullMenu();
+          gridCont.scrollTo({ left: 0, behavior: 'smooth' });
+          gridCont.style.opacity = '1';
+          gridCont.style.transform = 'translateY(0)';
+        }, 150);
+      } else {
+        renderFullMenu();
+      }
     }
 
     // Call both
