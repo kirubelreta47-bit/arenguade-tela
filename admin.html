@@ -629,11 +629,13 @@
       `).join('');
     }
 
-    async function loadReservations() {
+    async function loadReservations(isSilent = false) {
       const loader = document.getElementById('loader-container');
       const grid = document.getElementById('reservationsGrid');
       
-      grid.style.opacity = '0.5';
+      if (!isSilent) {
+        grid.style.opacity = '0.5';
+      }
       
       try {
         const res = await fetch(API_URL, { headers: { 'x-api-key': API_KEY } });
@@ -649,26 +651,42 @@
         document.getElementById('loginOverlay').style.display = 'none';
         
         const payload = await res.json();
-        allData = payload.data || payload; 
-        allData.reverse(); // Newest first
+        const freshData = payload.data || payload; 
+        freshData.reverse(); // Newest first
+
+        // Detect new incoming reservations for notification toast
+        if (isSilent && freshData.length > allData.length && allData.length > 0) {
+          showToast('🔔 New reservation received!');
+        }
+        
+        allData = freshData;
         
         updateStats();
         renderGrid();
-        if(document.getElementById('page-calendar').style.display === 'block') {
+        if (document.getElementById('page-calendar').style.display === 'block') {
           renderCalendar();
         }
         
         loader.style.display = 'none';
         grid.style.display = 'grid';
-        setTimeout(() => grid.style.opacity = '1', 50);
+        grid.style.opacity = '1';
         
       } catch (err) {
-        grid.innerHTML = '<div style="color:var(--accent-cancelled); padding: 40px; text-align:center;">Failed to load server data. Please ensure backend is running.</div>';
-        loader.style.display = 'none';
-        grid.style.display = 'block';
+        if (!isSilent) {
+          grid.innerHTML = '<div style="color:var(--accent-cancelled); padding: 40px; text-align:center;">Failed to load server data. Please ensure backend is running.</div>';
+          loader.style.display = 'none';
+          grid.style.display = 'block';
+        }
         console.error(err);
       }
     }
+
+    // Auto-poll for live updates every 5 seconds
+    setInterval(() => {
+      if (API_KEY && document.visibilityState === 'visible') {
+        loadReservations(true);
+      }
+    }, 5000);
 
     function renderCalendar() {
       const calGrid = document.getElementById('calendarGrid');
