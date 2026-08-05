@@ -27,7 +27,10 @@ export const handler = async (event) => {
         return { statusCode: 200, headers, body: '' };
     }
 
-    if (event.headers['x-api-key'] !== ADMIN_TOKEN) {
+    const apiKeyHeader = Object.keys(event.headers || {}).find(k => k.toLowerCase() === 'x-api-key');
+    const providedToken = apiKeyHeader ? event.headers[apiKeyHeader] : null;
+
+    if (providedToken !== ADMIN_TOKEN) {
         return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
     }
 
