@@ -1,3 +1,5 @@
+import { getReservations, saveReservations } from './store.mjs';
+
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin_secret_token_123';
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -12,8 +14,6 @@ async function notifyTelegram(message) {
         });
     } catch (e) {}
 }
-
-if (!globalThis.__reservations) globalThis.__reservations = [];
 
 export const handler = async (event) => {
     const headers = {
@@ -31,7 +31,7 @@ export const handler = async (event) => {
         return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
     }
 
-    const reservations = globalThis.__reservations;
+    let reservations = await getReservations();
     const id = event.queryStringParameters?.id;
 
     if (event.httpMethod === 'GET') {
@@ -49,6 +49,8 @@ export const handler = async (event) => {
         const newStatus = body.status || oldStatus;
         reservations[index].status = newStatus;
 
+        await saveReservations(reservations);
+
         if (oldStatus !== newStatus) {
             await notifyTelegram(`🔄 <b>Reservation Update</b>\n\n${reservations[index].name}'s reservation is now: <b>${newStatus.toUpperCase()}</b>`);
         }
@@ -57,11 +59,12 @@ export const handler = async (event) => {
     }
 
     if (event.httpMethod === 'DELETE') {
-        const before = globalThis.__reservations.length;
-        globalThis.__reservations = globalThis.__reservations.filter(r => r.id !== id);
-        if (globalThis.__reservations.length === before) {
+        const before = reservations.length;
+        reservations = reservations.filter(r => r.id !== id);
+        if (reservations.length === before) {
             return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
         }
+        await saveReservations(reservations);
         return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 

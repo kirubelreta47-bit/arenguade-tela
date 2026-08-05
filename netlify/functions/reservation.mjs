@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { getReservations, saveReservations } from './store.mjs';
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -15,10 +16,6 @@ async function notifyTelegram(message) {
         console.error('Telegram error:', e);
     }
 }
-
-// In-memory store (works within a single function invocation)
-// For persistence across requests use Netlify Blobs or a DB
-if (!globalThis.__reservations) globalThis.__reservations = [];
 
 export const handler = async (event) => {
     const headers = {
@@ -55,7 +52,9 @@ export const handler = async (event) => {
         createdAt: new Date().toISOString()
     };
 
-    globalThis.__reservations.push(newReservation);
+    const reservations = await getReservations();
+    reservations.push(newReservation);
+    await saveReservations(reservations);
 
     await notifyTelegram(
         `🗓 <b>New Reservation!</b>\n\n<b>Name:</b> ${newReservation.name}\n<b>Phone:</b> ${newReservation.phone}\n<b>Date:</b> ${newReservation.date} ${newReservation.time || ''}\n<b>Guests:</b> ${newReservation.guests || '1'}\n<b>Occasion:</b> ${newReservation.occasion || 'N/A'}\n<b>Notes:</b> ${newReservation.notes || 'None'}\n<b>Code:</b> <code>${newReservation.unique_code}</code>`
