@@ -2643,7 +2643,7 @@
             <div style="font-size: 60px; color: #2ecc71; margin-bottom: 20px;">✔</div>
             <h2 class="gold mb-2">Reservation Pending!</h2>
             <p class="gray mb-4">Your request is currently pending. To receive real-time updates directly on your phone, link your Telegram below!</p>
-            <a href="https://t.me/Arenguadetelabot" target="_blank" class="btn" style="width:100%; text-decoration:none; display:block; padding: 16px; margin-bottom: 12px; background: rgba(0, 136, 204, 0.1); color: #0088cc; border: 1px solid #0088cc;">Activate Telegram Updates</a>
+            <a href="https://t.me/Arenguadetelabot?start=${respData.reservation?.unique_code || ''}" target="_blank" class="btn" style="width:100%; text-decoration:none; display:block; padding: 16px; margin-bottom: 12px; background: rgba(0, 136, 204, 0.1); color: #0088cc; border: 1px solid #0088cc;">Activate Telegram Updates</a>
             <button class="btn btn-o" style="width:100%; padding: 16px;" onclick="location.reload()">Done (Book Another)</button>
           </div>
         `;

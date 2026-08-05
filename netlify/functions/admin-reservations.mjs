@@ -7,50 +7,68 @@ const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 async function notifyTelegramUsers(reservation, newStatus) {
     if (!BOT_TOKEN) return;
 
-    const chatIds = new Set();
-    if (CHAT_ID) chatIds.add(String(CHAT_ID));
+    let customerChatId = reservation.telegram_chat_id || null;
 
-    // Fetch updates to get all user chat IDs who started/messaged the bot
-    try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
-        if (res.ok) {
-            const data = await res.json();
-            if (data.ok && Array.isArray(data.result)) {
-                for (const update of data.result) {
-                    const id = update.message?.chat?.id || update.my_chat_member?.chat?.id;
-                    if (id) chatIds.add(String(id));
+    // Auto-detect specific customer's Telegram chat ID from getUpdates matching unique_code or phone
+    if (!customerChatId) {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.ok && Array.isArray(data.result)) {
+                    for (const update of data.result) {
+                        const msgText = update.message?.text || '';
+                        const chatId = update.message?.chat?.id;
+                        if (chatId) {
+                            const matchCode = reservation.unique_code && msgText.includes(reservation.unique_code);
+                            const matchPhone = reservation.phone && msgText.replace(/\s+/g, '').includes(reservation.phone.replace(/\s+/g, ''));
+                            if (matchCode || matchPhone) {
+                                customerChatId = String(chatId);
+                                reservation.telegram_chat_id = customerChatId;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
+        } catch (e) {
+            console.error('Error fetching Telegram updates for customer chat ID:', e);
         }
-    } catch (e) {
-        console.error('Error fetching Telegram updates:', e);
     }
 
     const statusUpper = newStatus.toUpperCase();
-    let msg = '';
 
-    if (newStatus === 'confirmed') {
-        msg = `🎉 <b>RESERVATION CONFIRMED!</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation at <b>Arenguade Tela Cafe & Restaurant</b> has been <b>CONFIRMED</b>!\n\n📅 <b>Date:</b> ${reservation.date} ${reservation.time || ''}\n👥 <b>Guests:</b> ${reservation.guests || '1'}\n🔑 <b>Code:</b> <code>${reservation.unique_code || 'N/A'}</code>\n\nWe look forward to hosting you!`;
-    } else if (newStatus === 'declined' || newStatus === 'cancelled') {
-        msg = `❌ <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation request for <b>${reservation.date} ${reservation.time || ''}</b> has been <b>${statusUpper}</b>.\n\nPlease contact us directly if you have any questions.`;
-    } else {
-        msg = `🔄 <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour reservation status is now: <b>${statusUpper}</b>.`;
-    }
-
-    // Send confirmation message to all bot users + admin
-    for (const id of chatIds) {
+    // 1. Send status log update to Admin/Staff Telegram Chat ID
+    if (CHAT_ID) {
+        const adminMsg = `🔄 <b>Reservation Update</b>\n\nCustomer: <b>${reservation.name}</b> (${reservation.unique_code || 'N/A'})\nStatus: <b>${statusUpper}</b>\nPhone: <code>${reservation.phone}</code>`;
         try {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: id,
-                    text: msg,
-                    parse_mode: 'HTML'
-                })
+                body: JSON.stringify({ chat_id: CHAT_ID, text: adminMsg, parse_mode: 'HTML' })
+            });
+        } catch (e) {}
+    }
+
+    // 2. Send customer confirmation message ONLY to the specific customer who reserved
+    if (customerChatId && String(customerChatId) !== String(CHAT_ID)) {
+        let msg = '';
+        if (newStatus === 'confirmed') {
+            msg = `🎉 <b>RESERVATION CONFIRMED!</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation at <b>Arenguade Tela Cafe & Restaurant</b> has been <b>CONFIRMED</b>!\n\n📅 <b>Date:</b> ${reservation.date} ${reservation.time || ''}\n👥 <b>Guests:</b> ${reservation.guests || '1'}\n🔑 <b>Code:</b> <code>${reservation.unique_code || 'N/A'}</code>\n\nWe look forward to hosting you!`;
+        } else if (newStatus === 'declined' || newStatus === 'cancelled') {
+            msg = `❌ <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour table reservation request for <b>${reservation.date} ${reservation.time || ''}</b> has been <b>${statusUpper}</b>.\n\nPlease contact us directly if you have any questions.`;
+        } else {
+            msg = `🔄 <b>RESERVATION UPDATE</b>\n\nDear <b>${reservation.name}</b>,\nYour reservation status is now: <b>${statusUpper}</b>.`;
+        }
+
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: customerChatId, text: msg, parse_mode: 'HTML' })
             });
         } catch (e) {
-            console.error(`Failed to send message to Telegram chat ${id}:`, e);
+            console.error(`Failed to send message to customer chat ${customerChatId}:`, e);
         }
     }
 }
@@ -75,7 +93,10 @@ export const handler = async (event) => {
     }
 
     let reservations = await getReservations();
-    const id = event.queryStringParameters?.id;
+    
+    // Extract ID from query string or URL path
+    const pathLastSegment = event.path.split('/').pop();
+    const id = event.queryStringParameters?.id || (pathLastSegment !== 'admin-reservations' && pathLastSegment !== 'reservations' ? pathLastSegment : null);
 
     if (event.httpMethod === 'GET') {
         return { statusCode: 200, headers, body: JSON.stringify({ data: reservations }) };
@@ -83,7 +104,7 @@ export const handler = async (event) => {
 
     if (event.httpMethod === 'PUT') {
         const index = reservations.findIndex(r => r.id === id);
-        if (index === -1) return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
+        if (index === -1) return { statusCode: 404, headers, body: JSON.stringify({ error: 'Reservation not found' }) };
 
         let body;
         try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
@@ -105,7 +126,7 @@ export const handler = async (event) => {
         const before = reservations.length;
         reservations = reservations.filter(r => r.id !== id);
         if (reservations.length === before) {
-            return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
+            return { statusCode: 404, headers, body: JSON.stringify({ error: 'Reservation not found' }) };
         }
         await saveReservations(reservations);
         return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
