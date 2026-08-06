@@ -757,9 +757,9 @@
       }
     }
 
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:3001'
-      : (window.VITE_API_URL || '');
+    const API_BASE = (window.VITE_API_URL)
+      ? window.VITE_API_URL
+      : ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
     const API_URL = `${API_BASE}/api/admin/reservations`;
     let API_KEY = sessionStorage.getItem('admin_key');
 
