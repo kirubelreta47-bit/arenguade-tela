@@ -407,6 +407,98 @@
       border-color: var(--accent-cancelled);
     }
 
+    /* Quick Status Action Buttons */
+    .status-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn-status {
+      flex: 1;
+      min-width: 70px;
+      padding: 8px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-status:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-status.approve.active {
+      background: rgba(46, 204, 113, 0.25);
+      border-color: var(--accent-confirmed);
+      color: var(--accent-confirmed);
+    }
+
+    .btn-status.approve:hover:not(:disabled) {
+      border-color: var(--accent-confirmed);
+      color: var(--accent-confirmed);
+    }
+
+    .btn-status.reject.active {
+      background: rgba(231, 76, 60, 0.25);
+      border-color: var(--accent-cancelled);
+      color: var(--accent-cancelled);
+    }
+
+    .btn-status.reject:hover:not(:disabled) {
+      border-color: var(--accent-cancelled);
+      color: var(--accent-cancelled);
+    }
+
+    .btn-status.arrived.active {
+      background: rgba(52, 152, 219, 0.25);
+      border-color: #3498db;
+      color: #3498db;
+    }
+
+    .btn-status.arrived:hover:not(:disabled) {
+      border-color: #3498db;
+      color: #3498db;
+    }
+
+    .btn-status.missed.active {
+      background: rgba(149, 165, 166, 0.25);
+      border-color: #95a5a6;
+      color: #95a5a6;
+    }
+
+    .btn-status.missed:hover:not(:disabled) {
+      border-color: #95a5a6;
+      color: #95a5a6;
+    }
+
+    .btn-status.delete-btn {
+      flex: 0 0 auto;
+      min-width: 38px;
+      background: transparent;
+      border-color: rgba(231, 76, 60, 0.3);
+      color: var(--accent-cancelled);
+    }
+
+    .btn-status.delete-btn:hover {
+      background: rgba(231, 76, 60, 0.15);
+    }
+
+    .btn-status:disabled {
+      opacity: 0.3;
+      cursor: not-allowed !important;
+      filter: grayscale(100%);
+    }
+
     /* Toast */
     .toast-container {
       position: fixed;
@@ -601,15 +693,27 @@
             </div>
           </div>
 
-          <div class="filters" id="filters">
-            <button class="filter-btn active" data-filter="all">All Reservations</button>
-            <button class="filter-btn" data-filter="today"
-              style="border-color: var(--gold); color: var(--gold);">Today's Action</button>
-            <button class="filter-btn" data-filter="pending">Pending</button>
-            <button class="filter-btn" data-filter="confirmed">Confirmed</button>
-            <button class="filter-btn" data-filter="arrived">Arrived</button>
-            <button class="filter-btn" data-filter="missed">Missed</button>
-            <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <div class="filters" id="filters" style="margin-bottom: 0;">
+              <button class="filter-btn active" data-filter="all">All Reservations</button>
+              <button class="filter-btn" data-filter="today"
+                style="border-color: var(--gold); color: var(--gold);">Today's Action</button>
+              <button class="filter-btn" data-filter="pending">Pending</button>
+              <button class="filter-btn" data-filter="confirmed">Confirmed</button>
+              <button class="filter-btn" data-filter="arrived">Arrived</button>
+              <button class="filter-btn" data-filter="missed">Missed</button>
+              <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color);">
+              <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Sort By:</span>
+              <select id="sortBySelect" onchange="changeSort(this.value)" class="action-select" style="padding: 4px 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gold); outline: none;">
+                <option value="newest" style="background:#010306; color:#fff;">🆕 Newest First</option>
+                <option value="oldest" style="background:#010306; color:#fff;">⌛ Oldest First</option>
+                <option value="date" style="background:#010306; color:#fff;">📅 Booking Date</option>
+                <option value="guests" style="background:#010306; color:#fff;">👥 Guest Count</option>
+              </select>
+            </div>
           </div>
 
           <div style="text-align: center;" id="loader-container">
@@ -820,7 +924,6 @@
       loadReservations();
     }
     let allData = [];
-    let currentFilter = 'all';
 
     function showToast(message) {
       const container = document.getElementById('toastContainer');
@@ -840,6 +943,28 @@
       }, 3000);
     }
 
+    let currentFilter = 'all';
+    let currentSort = 'newest';
+
+    function changeSort(val) {
+      currentSort = val;
+      renderGrid();
+    }
+
+    function sortData(list) {
+      const copy = [...list];
+      if (currentSort === 'newest') {
+        return copy.sort((a, b) => new Date(b.createdat || b.createdAt || 0) - new Date(a.createdat || a.createdAt || 0));
+      } else if (currentSort === 'oldest') {
+        return copy.sort((a, b) => new Date(a.createdat || a.createdAt || 0) - new Date(b.createdat || b.createdAt || 0));
+      } else if (currentSort === 'date') {
+        return copy.sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || ''));
+      } else if (currentSort === 'guests') {
+        return copy.sort((a, b) => (parseInt(b.guests) || 0) - (parseInt(a.guests) || 0));
+      }
+      return copy;
+    }
+
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -851,8 +976,8 @@
 
     function updateStats() {
       document.getElementById('stat-total').innerText = allData.length;
-      document.getElementById('stat-pending').innerText = allData.filter(r => r.status === 'pending').length;
-      document.getElementById('stat-confirmed').innerText = allData.filter(r => r.status === 'confirmed').length;
+      document.getElementById('stat-pending').innerText = allData.filter(r => (r.status || '').toLowerCase() === 'pending').length;
+      document.getElementById('stat-confirmed').innerText = allData.filter(r => (r.status || '').toLowerCase() === 'confirmed').length;
     }
 
     function renderGrid() {
@@ -860,11 +985,13 @@
 
       let filteredData = allData;
       if (currentFilter === 'today') {
-        const todayText = document.getElementById('ethiopianTodayText').innerText.replace('ዛሬ: ', '').trim();
-        filteredData = allData.filter(r => r.date === todayText);
+        const todayText = (document.getElementById('ethiopianTodayText')?.innerText || '').replace('ዛሬ: ', '').trim();
+        filteredData = allData.filter(r => r.date === todayText || (r.date && r.date.includes(todayText)));
       } else if (currentFilter !== 'all') {
-        filteredData = allData.filter(r => r.status === currentFilter);
+        filteredData = allData.filter(r => (r.status || '').toLowerCase() === currentFilter.toLowerCase());
       }
+
+      filteredData = sortData(filteredData);
 
       if (filteredData.length === 0) {
         grid.innerHTML = `
@@ -912,20 +1039,38 @@
           
           ${r.notes ? `<div class="notes-box">"${esc(r.notes)}"</div>` : `<div style="height:10px;"></div>`}
           
-          <div class="timestamp">Received: ${new Date(r.createdAt).toLocaleString()}</div>
+          <div class="timestamp">Received: ${new Date(r.createdat || r.createdAt).toLocaleString()}</div>
           
-          <div class="actions">
-            <select id="status-${r.id}" class="action-select">
-              <option value="pending" ${r.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-              <option value="confirmed" ${r.status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
-              <option value="arrived" ${r.status === 'arrived' ? 'selected' : ''}>🍽️ Arrived</option>
-              <option value="missed" ${r.status === 'missed' ? 'selected' : ''}>⚠️ Missed</option>
-              <option value="cancelled" ${r.status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
-            </select>
-            <button class="action-btn save" onclick="updateStatus('${r.id}')">Save</button>
-            <button class="action-btn delete" onclick="deleteReservation('${r.id}')" aria-label="Delete">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+          <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px;">Quick Status Actions</div>
+            <div class="status-btn-group">
+              <button class="btn-status approve ${r.status === 'confirmed' ? 'active' : ''}" 
+                      onclick="updateStatus('${r.id}', 'confirmed')" 
+                      title="Approve Reservation">
+                ✅ Approve
+              </button>
+              <button class="btn-status reject ${r.status === 'cancelled' ? 'active' : ''}" 
+                      onclick="updateStatus('${r.id}', 'cancelled')" 
+                      ${r.status === 'confirmed' ? 'disabled' : ''} 
+                      title="${r.status === 'confirmed' ? 'Once approved, a reservation cannot be rejected' : 'Reject Reservation'}">
+                ❌ Reject
+              </button>
+              <button class="btn-status arrived ${r.status === 'arrived' ? 'active' : ''}" 
+                      onclick="updateStatus('${r.id}', 'arrived')" 
+                      title="Mark Arrived">
+                🍽️ Arrived
+              </button>
+              <button class="btn-status missed ${r.status === 'missed' ? 'active' : ''}" 
+                      onclick="updateStatus('${r.id}', 'missed')" 
+                      title="Mark Missed">
+                ⚠️ Missed
+              </button>
+              <button class="btn-status delete-btn" 
+                      onclick="deleteReservation('${r.id}')" 
+                      title="Delete Reservation">
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
       `).join('');
@@ -956,17 +1101,21 @@
         const freshData = payload.data || payload;
         freshData.reverse(); // Newest first
 
-        // Detect new incoming reservations for notification toast
-        if (isSilent && freshData.length > allData.length && allData.length > 0) {
-          showToast('🔔 New reservation received!');
-        }
+        const hasChanged = JSON.stringify(freshData) !== JSON.stringify(allData);
 
-        allData = freshData;
+        if (!isSilent || hasChanged) {
+          // Detect new incoming reservations for notification toast
+          if (isSilent && freshData.length > allData.length && allData.length > 0) {
+            showToast('🔔 New reservation received!');
+          }
 
-        updateStats();
-        renderGrid();
-        if (document.getElementById('page-calendar').style.display === 'block') {
-          renderCalendar();
+          allData = freshData;
+
+          updateStats();
+          renderGrid();
+          if (document.getElementById('page-calendar').style.display === 'block') {
+            renderCalendar();
+          }
         }
 
         loader.style.display = 'none';
@@ -1030,23 +1179,35 @@
       }
     }
 
-    async function updateStatus(id) {
-      const status = document.getElementById(`status-${id}`).value;
+    async function updateStatus(id, targetStatus) {
+      const item = allData.find(r => r.id === id);
+      const status = targetStatus || (document.getElementById(`status-${id}`) ? document.getElementById(`status-${id}`).value : '');
+
+      if (!status) return;
+
+      if (item && item.status === 'confirmed' && status === 'cancelled') {
+        showToast('❌ Once approved, a reservation cannot be rejected!');
+        return;
+      }
+
+      if (item && item.status === status) return; // Already set
+
       try {
         const res = await fetch(`${API_URL}?id=${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
           body: JSON.stringify({ status })
         });
+        const data = await res.json();
 
-        if (res.ok) {
+        if (res.ok && data.success) {
           const index = allData.findIndex(r => r.id === id);
           if (index !== -1) allData[index].status = status;
           updateStats();
           renderGrid();
-          showToast('Reservation status updated!');
+          showToast(`Status updated to ${status.toUpperCase()}!`);
         } else {
-          showToast('Failed to update status');
+          showToast(data.error || 'Failed to update status');
         }
       } catch (err) { showToast('Network Error'); }
     }
@@ -1085,9 +1246,11 @@
         const res = await fetch(`${API_BASE}/api/admin/users`, { headers: { 'x-api-key': API_KEY } });
         if (!res.ok) return;
         const data = await res.json();
-        allUsersData = data;
-        renderCustomers();
-        renderAdmins();
+        if (JSON.stringify(data) !== JSON.stringify(allUsersData)) {
+          allUsersData = data;
+          renderCustomers();
+          renderAdmins();
+        }
       } catch (e) {
         console.error('Failed to load users:', e);
       }
