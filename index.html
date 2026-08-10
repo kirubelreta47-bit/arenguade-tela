@@ -314,6 +314,40 @@
       border-bottom-color: rgba(212, 175, 55, 0.2);
     }
 
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      height: 100%;
+      padding: 6px 0;
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .nav-brand:hover {
+      transform: scale(1.03);
+    }
+
+    .nav-logo-img {
+      height: 64px;
+      max-height: 64px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.25));
+      mix-blend-mode: lighten;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+
+    .nav-brand:hover .nav-logo-img {
+      filter: drop-shadow(0 0 16px rgba(243, 195, 67, 0.5));
+    }
+
+    @media (max-width: 768px) {
+      .nav-logo-img {
+        height: 52px;
+        max-height: 52px;
+      }
+    }
+
     .nav-links {
       display: flex;
       gap: 32px;
@@ -1383,13 +1417,8 @@
 
   <!-- 1. NAVIGATION -->
   <nav id="navbar">
-    <a href="#" onclick="navigateTo('view-home'); return false;" aria-label="Home">
-      <svg width="200" height="60" viewBox="0 0 200 60">
-        <ellipse cx="80" cy="30" rx="70" ry="24" fill="none" stroke="#FFD13B" stroke-width="1.5" />
-        <text x="25" y="28" fill="#FFD13B" font-family="Noto Serif Ethiopic" font-size="20">አረንጓዴ ጥላ</text>
-        <text x="32" y="44" fill="#FFD13B" font-family="Poppins" font-size="9" font-weight="300" letter-spacing="1">Cafe
-          and Restaurant</text>
-      </svg>
+    <a href="#" onclick="navigateTo('view-home'); return false;" class="nav-brand" aria-label="Arenguade Tila Home">
+      <img src="/arenguadetilalogo.png" onerror="if(!this.tried){this.tried=true;this.src='public/arenguadetilalogo.png';}" alt="Arenguade Tila Cafe & Restaurant Logo" class="nav-logo-img">
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#" onclick="navigateTo('view-home'); return false;">Home</a></li>
@@ -2111,8 +2140,9 @@
     <div class="container">
       <div class="grid grid-4">
         <div>
-          <h4 class="gold amh" style="font-size: 24px;">አረንጓዴ ጥላ</h4>
-          <p class="mb-2" style="font-size: 13px;">Cafe & Restaurant</p>
+          <a href="#" onclick="navigateTo('view-home'); return false;" style="display:inline-block; margin-bottom:12px;">
+            <img src="/arenguadetilalogo.png" onerror="if(!this.tried){this.tried=true;this.src='public/arenguadetilalogo.png';}" alt="Arenguade Tila Logo" style="height: 70px; width: auto; mix-blend-mode: lighten; filter: drop-shadow(0 2px 10px rgba(212,175,55,0.3));">
+          </a>
           <p>More Than a Meal — An Experience.</p>
         </div>
         <div>
@@ -2122,6 +2152,7 @@
             <li><a href="#" onclick="navigateTo('view-full-menu'); return false;">Menu</a></li>
             <li><a href="#" onclick="navigateTo('view-events'); return false;">Events</a></li>
             <li><a href="#" onclick="navigateTo('view-rewards'); return false;">Rewards</a></li>
+            <li><a href="/admin.html" target="_blank" style="color: var(--g);">🔑 Admin Dashboard</a></li>
           </ul>
         </div>
         <div>
@@ -2636,9 +2667,10 @@
       btn.disabled = true;
 
       try {
+        const PROD_API_URL = 'https://backend-api-1-qhnn.onrender.com';
         const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
           ? 'http://localhost:3001'
-          : 'https://backend-api-1-qhnn.onrender.com';
+          : (window.VITE_API_URL ? window.VITE_API_URL.replace(/\/$/, '') : PROD_API_URL);
 
         const response = await fetch(`${API_BASE}/api/reservation`, {
           method: 'POST',
