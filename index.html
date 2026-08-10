@@ -1547,7 +1547,7 @@
             <!-- JS Populated -->
           </div>
 
-          <div class="grid grid-4" id="menuGrid">
+          <div class="luxury-grid" id="menuGrid">
             <!-- JS Populated -->
           </div>
         </div>
@@ -1929,16 +1929,24 @@
 
       .luxury-grid {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
         gap: 24px;
-        max-width: 1200px;
+        max-width: 1300px;
         margin: 0 auto;
         transition: opacity 0.3s ease, transform 0.3s ease;
       }
 
-      @media(min-width: 900px) {
+      @media(max-width: 992px) {
         .luxury-grid {
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
+      }
+
+      @media(max-width: 640px) {
+        .luxury-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
         }
       }
 
@@ -1949,53 +1957,23 @@
         border: 1px solid #1E293B;
         border-radius: 16px;
         overflow: hidden;
-        transition: all 0.3s ease;
-      }
-
-      @media(min-width: 600px) {
-        .luxury-card {
-          flex-direction: row;
-        }
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
 
       .luxury-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(226, 183, 85, 0.3);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        transform: translateY(-5px);
+        border-color: rgba(226, 183, 85, 0.5);
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 55, 0.18);
       }
 
-      .luxury-card-img {
-        width: 100%;
-        height: 230px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      @media(min-width: 600px) {
-        .luxury-card-img {
-          width: 40%;
-          height: auto;
-          min-height: 230px;
-        }
-      }
-
-      .luxury-card-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-      }
-
-      .luxury-card:hover .luxury-card-img img {
-        transform: scale(1.05);
-      }
-
-      .luxury-card-img::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
-        pointer-events: none;
+      .luxury-card:active {
+        transform: scale(0.98);
+        border-color: #E2B755;
+        background: #17202e;
       }
 
       .luxury-card-body {
@@ -2003,73 +1981,121 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-      }
-
-      @media(min-width: 600px) {
-        .luxury-card-body {
-          width: 60%;
-        }
+        justify-content: space-between;
+        height: 100%;
       }
 
       .luxury-card-head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
         gap: 12px;
       }
 
       .luxury-card-head h3 {
-        font-family: 'Noto Serif Ethiopic', serif;
+        font-family: 'Noto Serif Ethiopic', 'Playfair Display', serif;
         font-size: 22px;
         margin: 0;
-        color: #fff;
+        color: #ffffff;
         font-weight: 700;
-        line-height: 1.2;
-        letter-spacing: -0.5px;
+        line-height: 1.25;
+        letter-spacing: -0.3px;
       }
 
       .luxury-card-price {
         color: #E2B755;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 800;
         white-space: nowrap;
       }
 
       .luxury-card-sub {
-        font-size: 11px;
+        font-size: 12px;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        color: rgba(226, 183, 85, 0.9);
+        letter-spacing: 1.5px;
+        color: rgba(226, 183, 85, 0.95);
+        margin-bottom: 14px;
+        font-weight: 600;
+      }
+
+      .minimal-ingredients {
+        font-size: 13px;
+        color: #cbd5e1;
+        line-height: 1.55;
         margin-bottom: 16px;
-        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .minimal-ingredients .ing-dot {
+        color: #E2B755;
+        margin: 0 5px;
+        font-weight: 700;
       }
 
       .luxury-pill-wrap {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 24px;
+        gap: 6px;
+        margin-bottom: 16px;
       }
 
       .luxury-pill {
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #ccc;
-        font-size: 11px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        text-shadow: none;
-        font-weight: 400;
+        background: rgba(212, 175, 55, 0.06);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        color: #e2e8f0;
+        font-size: 11.5px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        transition: all 0.2s ease;
+      }
+
+      .luxury-card:hover .luxury-pill {
+        border-color: rgba(212, 175, 55, 0.4);
+        color: #ffffff;
+        background: rgba(212, 175, 55, 0.12);
       }
 
       .luxury-card-foot {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
         padding-top: 16px;
         margin-top: auto;
+      }
+
+      @media(max-width: 640px) {
+        .luxury-card-body {
+          padding: 20px 18px;
+        }
+
+        .luxury-card-head h3 {
+          font-size: 19px !important;
+        }
+
+        .luxury-card-price {
+          font-size: 18px !important;
+        }
+
+        .luxury-card-sub {
+          font-size: 11px !important;
+        }
+
+        .minimal-ingredients {
+          font-size: 12.5px !important;
+        }
+
+        .luxury-pill {
+          font-size: 11px !important;
+          padding: 3px 9px !important;
+        }
       }
 
       .luxury-pair-box {
@@ -2131,7 +2157,21 @@
       </div>
       <div class="luxury-grid" id="fullMenuGrid">
         <!-- JS Populated -->
+  <!-- DISH DETAIL MODAL -->
+  <div class="modal-overlay" id="dishDetailModal" style="z-index: 2500;">
+    <div class="modal-box" style="text-align:left; max-width: 440px; background: #121721; border: 1px solid rgba(226,183,85,0.3); border-radius: 20px;">
+      <button class="close-modal" onclick="closeDishModal()">&times;</button>
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--g); margin-bottom: 6px;" id="dishModalCategory">Menu Item</div>
+      <h3 class="gold mb-1" style="font-size: 24px; font-family: 'Playfair Display', 'Noto Serif Ethiopic', serif;" id="dishModalTitle">Dish Name</h3>
+      <div style="font-size: 22px; font-weight: 800; color: #E2B755; margin-bottom: 14px;" id="dishModalPrice">0 ETB</div>
+      <p class="gray mb-3" style="font-size: 13.5px; line-height: 1.6;" id="dishModalDesc">Description</p>
+      
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 8px;">Key Ingredients / Features</div>
+        <div class="luxury-pill-wrap" id="dishModalPills" style="margin-bottom:0;"></div>
       </div>
+      
+      <button class="btn pulse-btn" id="dishModalReserveBtn" onclick="reserveSelectedDish()" style="width:100%; padding:14px; font-size:13px; letter-spacing:1px; border-radius: 40px;">Reserve a Table for This Dish</button>
     </div>
   </div>
 
@@ -2362,6 +2402,105 @@
 
     var fullMenuActiveTab = "ሁሉንም / All Items";
 
+    var selectedDishName = "";
+
+    function openDishModal(name) {
+      let found = null;
+      let foundCat = "";
+      for (let cat in menuData) {
+        let itm = menuData[cat].find(x => x.n === name);
+        if (itm) {
+          found = itm;
+          foundCat = cat;
+          break;
+        }
+      }
+      if (!found) return;
+
+      selectedDishName = found.n;
+      document.getElementById('dishModalCategory').innerText = foundCat;
+      document.getElementById('dishModalTitle').innerText = found.n;
+      document.getElementById('dishModalPrice').innerText = found.p + ' ETB';
+      let ingredients = found.ings;
+      if (!ingredients) {
+        ingredients = found.d.split(/·|,/).map(x => x.trim()).filter(x => x.length > 0);
+      }
+      let pillHtml = ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('');
+      document.getElementById('dishModalPills').innerHTML = pillHtml;
+
+      document.getElementById('dishModalReserveBtn').innerText = `Reserve Table for "${found.n}"`;
+      var modal = document.getElementById('dishDetailModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeDishModal() {
+      var modal = document.getElementById('dishDetailModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function reserveSelectedDish() {
+      closeDishModal();
+      navigateTo('view-reservations');
+      setTimeout(() => {
+        var textarea = document.querySelector('#reservationFormWrapper textarea');
+        if (textarea && selectedDishName) {
+          textarea.value = `Table reservation request for: ${selectedDishName}`;
+          textarea.focus();
+        }
+      }, 300);
+    }
+
+    function renderLuxuryCardHtml(itm, i) {
+      let ingredients = itm.ings;
+      if (!ingredients) {
+        ingredients = itm.d.split(/·|,/).map(x => x.trim()).filter(x => x.length > 0);
+      }
+      
+      let ingHtml = '';
+      if (ingredients.length > 0) {
+        if (ingredients.length <= 4) {
+          ingHtml = `<div class="luxury-pill-wrap">` + ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('') + `</div>`;
+        } else {
+          ingHtml = `<div class="minimal-ingredients">` + ingredients.join(' <span class="ing-dot">·</span> ') + `</div>`;
+        }
+      }
+
+      let heatHtml = '';
+      if (itm.heat) {
+        heatHtml = `<div class="heat-dots">
+                <div class="heat-dot ${itm.heat >= 1 ? 'hot' : ''}"></div>
+                <div class="heat-dot ${itm.heat >= 2 ? 'hot' : ''}"></div>
+                <div class="heat-dot ${itm.heat >= 3 ? 'hot' : ''}"></div>
+            </div>`;
+      }
+      let pairHtml = itm.pair ? `<div>${itm.pair}</div>` : '';
+      let enSubtitle = (itm.en && itm.en !== itm.n) ? itm.en : '';
+      let safeName = (itm.n || '').replace(/'/g, "\\'");
+
+      return `
+        <div class="luxury-card reveal active" onclick="openDishModal('${safeName}')" style="animation-delay: ${i * 0.05}s">
+          <div class="luxury-card-body" style="width: 100%;">
+              <div>
+                  <div class="luxury-card-head">
+                      <h3>${itm.n}</h3>
+                      <span class="luxury-card-price">${itm.p} ETB</span>
+                  </div>
+                  ${enSubtitle ? `<div class="luxury-card-sub">${enSubtitle}</div>` : ''}
+                  ${ingHtml}
+              </div>
+              
+              <div class="luxury-card-foot">
+                  <div class="luxury-pair-box">
+                      ${heatHtml}
+                      ${pairHtml}
+                  </div>
+                  <button class="add-btn" onclick="event.stopPropagation(); openDishModal('${safeName}');" title="Quick View & Reserve">+</button>
+              </div>
+          </div>
+        </div>
+        `;
+    }
+
     function renderFeaturedMenu() {
       var gridCont = document.getElementById('menuGrid');
       var tabsCont = document.getElementById('menuTabs');
@@ -2370,24 +2509,13 @@
       // Get first 4 items from first category
       var featuredItems = menuData["የፆም ምሳ"].slice(0, 4);
 
-      gridCont.innerHTML = featuredItems.map((itm, i) => `
-        <div class="menu-card reveal active">
-          <img src="https://image.pollinations.ai/prompt/delicious%20${encodeURIComponent(itm.d)}%20ethiopian%20food%20plate%20photography%20restaurant?width=500&height=350&nologo=true" alt="${itm.n}" loading="lazy">
-          <div class="menu-card-body">
-            <div>
-              <h3 class="mb-1" style="font-size:20px;">${itm.n}</h3>
-              <p class="gray mb-2" style="font-size:13px; min-height:40px;">${itm.d}</p>
-            </div>
-            <div class="flex" style="justify-content:space-between; margin-top:15px; border-top:1px solid rgba(255,255,255,0.05); padding-top:15px;">
-              <span class="gold" style="font-weight:600; font-size:18px;">${itm.p} ETB</span>
-              
-            </div>
-          </div>
-        </div>
-      `).join('');
+      gridCont.innerHTML = featuredItems.map((itm, i) => renderLuxuryCardHtml(itm, i)).join('');
 
-      var btnHtml = `<div style="text-align: center; margin-top: 40px; width: 100%;"><button class="btn" onclick="navigateTo('view-full-menu'); return false;">View Full Menu</button></div>`;
-      gridCont.insertAdjacentHTML('afterend', btnHtml);
+      var existingBtn = gridCont.nextElementSibling;
+      if (!existingBtn || !existingBtn.classList.contains('view-full-menu-wrap')) {
+        var btnHtml = `<div class="view-full-menu-wrap" style="text-align: center; margin-top: 40px; width: 100%;"><button class="btn" onclick="navigateTo('view-full-menu'); return false;">View Full Menu</button></div>`;
+        gridCont.insertAdjacentHTML('afterend', btnHtml);
+      }
     }
 
     function renderFullMenu() {
@@ -2412,58 +2540,7 @@
         items = menuData[fullMenuActiveTab] || [];
       }
 
-      gridCont.innerHTML = items.map((itm, i) => {
-        // Dynamic badge extraction if ings absent
-        let ingredients = itm.ings;
-        if (!ingredients) {
-          ingredients = itm.d.split(/·|,/).map(x => x.trim()).filter(x => x.length > 0);
-        }
-        let pillHtml = ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('');
-
-        let heatHtml = '';
-        if (itm.heat) {
-          heatHtml = `<div class="heat-dots">
-                  <div class="heat-dot ${itm.heat >= 1 ? 'hot' : ''}"></div>
-                  <div class="heat-dot ${itm.heat >= 2 ? 'hot' : ''}"></div>
-                  <div class="heat-dot ${itm.heat >= 3 ? 'hot' : ''}"></div>
-              </div>`;
-        }
-        let pairHtml = itm.pair ? `<div>${itm.pair}</div>` : '';
-
-        let enSubtitle = itm.en || itm.d.substring(0, 40) + '...'; // Fallback
-
-        // Determine image prompt logic
-        let imgQuery = encodeURIComponent(itm.en ? itm.en : itm.n);
-
-        return `
-          <div class="luxury-card reveal active" style="animation-delay: ${i * 0.05}s">
-            <div class="luxury-card-img">
-                <img src="https://image.pollinations.ai/prompt/delicious%20${imgQuery}%20ethiopian%20food%20plate%20cinematic%20lighting?width=500&height=500&nologo=true" alt="${itm.n}" loading="lazy">
-            </div>
-            <div class="luxury-card-body">
-                <div>
-                    <div class="luxury-card-head">
-                        <h3>${itm.n}</h3>
-                        <span class="luxury-card-price">${itm.p} ETB</span>
-                    </div>
-                    <div class="luxury-card-sub">${enSubtitle}</div>
-                    
-                    <div class="luxury-pill-wrap">
-                        ${pillHtml}
-                    </div>
-                </div>
-                
-                <div class="luxury-card-foot">
-                    <div class="luxury-pair-box">
-                        ${heatHtml}
-                        ${pairHtml}
-                    </div>
-                    <button class="add-btn" onclick="navigateTo('view-reservations'); return false;">+</button>
-                </div>
-            </div>
-          </div>
-          `;
-      }).join('');
+      gridCont.innerHTML = items.map((itm, i) => renderLuxuryCardHtml(itm, i)).join('');
     }
 
     function switchFullTab(t) {
