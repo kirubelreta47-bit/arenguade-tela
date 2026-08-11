@@ -27,7 +27,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.mengede.app
-          username: arenguadetela.mengede.app
+          username: arenguadetela@arenguadetela.mengede.app
           password: ${{ secrets.ftp_secret }}
           local-dir: dist/
           server-dir: /
