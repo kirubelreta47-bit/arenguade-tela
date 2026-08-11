@@ -12,17 +12,7 @@ let fullMenuActiveTab = "ሁሉንም / All Items";
  * @returns {string} HTML markup string
  */
 function renderLuxuryCardHtml(item, index) {
-  let ingredients = item.ings;
-  if (!ingredients) {
-    ingredients = item.d.split(/·|,/).map(x => x.trim()).filter(x => x.length > 0);
-  }
-  
   let ingredientMarkup = '';
-  if (ingredients.length > 0) {
-    ingredientMarkup = `<div class="luxury-pill-wrap">` + 
-      ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('') + 
-      `</div>`;
-  }
 
   let heatHtml = '';
   if (item.heat) {
@@ -49,12 +39,15 @@ function renderLuxuryCardHtml(item, index) {
           ${ingredientMarkup}
         </div>
         
-        <div class="luxury-card-foot">
-          <div class="luxury-pair-box">
-            ${heatHtml}
-            ${pairHtml}
+        <div class="luxury-card-foot" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+          <button style="background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 4px 12px; font-size: 11px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s;" onclick="event.stopPropagation(); openDishModal('${safeName}');" onmouseover="this.style.background='var(--gold)'; this.style.color='#010306';" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)';">Details</button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="luxury-pair-box" style="margin-bottom: 0;">
+              ${heatHtml}
+              ${pairHtml}
+            </div>
+            <button class="add-btn" onclick="event.stopPropagation(); openDishModal('${safeName}');" title="Quick View & Reserve">+</button>
           </div>
-          <button class="add-btn" onclick="event.stopPropagation(); openDishModal('${safeName}');" title="Quick View & Reserve">+</button>
         </div>
       </div>
     </div>
