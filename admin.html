@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet">
 
   <style>
@@ -355,6 +355,8 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
       position: relative;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .notes-box.empty {
@@ -672,11 +674,11 @@
 
   <div class="dashboard-wrapper">
     <aside class="sidebar">
-      <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+      <h2 style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px; flex-wrap: nowrap; overflow: visible;">
         <img src="/arenguadetilalogo.png"
           onerror="if(!this.tried){this.tried=true;this.src='public/arenguadetilalogo.png';}" alt="Arenguade Tila Logo"
-          style="height: 48px; width: auto; mix-blend-mode: lighten; filter: drop-shadow(0 0 8px rgba(212,175,55,0.3));">
-        <span style="font-size: 18px;">Admin</span>
+          style="flex-shrink: 0; height: 52px; width: 52px; object-fit: contain; mix-blend-mode: lighten; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">
+        <span style="font-size: 26px; font-family: 'Cormorant Garamond', serif; font-weight: 700; letter-spacing: 1px; white-space: nowrap; background: linear-gradient(135deg, #FFFFFF 0%, #F3C343 50%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tela Admin</span>
       </h2>
       <ul>
         <li><a href="#" class="active" onclick="switchPage('reservations', event)">📅 Reservations</a></li>
@@ -750,9 +752,9 @@
                 By:</span>
               <select id="sortBySelect" onchange="changeSort(this.value)" class="action-select"
                 style="padding: 4px 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gold); outline: none;">
-                <option value="status" style="background:#010306; color:#fff;" selected>📌 Status Type</option>
+                <option value="newest" style="background:#010306; color:#fff;" selected>🆕 Newest First</option>
+                <option value="status" style="background:#010306; color:#fff;">📌 Status Type</option>
                 <option value="date" style="background:#010306; color:#fff;">📅 Booking Date</option>
-                <option value="newest" style="background:#010306; color:#fff;">🆕 Newest First</option>
                 <option value="oldest" style="background:#010306; color:#fff;">⌛ Oldest First</option>
                 <option value="guests" style="background:#010306; color:#fff;">👥 Guest Count</option>
               </select>
@@ -854,6 +856,20 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- DETAILS MODAL -->
+  <div id="detailsModal"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10001; align-items:center; justify-content:center; backdrop-filter: blur(4px); padding: 20px;">
+    <div class="login-box"
+      style="text-align:left; background: var(--bg-card); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); width: 100%; max-width: 550px; position: relative;">
+      <h3 style="color:var(--gold); margin-bottom:16px; font-family:'Playfair Display', serif; font-size: 20px; display: flex; align-items: center; gap: 8px;" id="detailsModalTitle">
+        Special Request
+      </h3>
+      <div id="detailsModalText" style="color:var(--text-main); font-size:15px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--gold); max-height: 400px; overflow-y: auto; margin-bottom: 24px;">
+      </div>
+      <button onclick="closeDetailsModal()" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: var(--border-color); color: var(--text-main); font-weight: 600; cursor: pointer; transition: 0.2s;">Close</button>
+    </div>
+  </div>
+
   <!-- ADD ADMIN USER MODAL -->
   <div id="addUserModal"
     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10001; align-items:center; justify-content:center;">
@@ -908,8 +924,9 @@
     }
 
     const PROD_API_URL = 'https://backend-api-1-qhnn.onrender.com';
-    const API_BASE = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
-      ? 'http://localhost:3001'
+    const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.'));
+    const API_BASE = isLocal
+      ? `http://${window.location.hostname}:3001`
       : (typeof window !== 'undefined' && window.VITE_API_URL ? window.VITE_API_URL.replace(/\/$/, '') : PROD_API_URL);
     const API_URL = `${API_BASE}/api/admin/reservations`;
     let API_KEY = sessionStorage.getItem('admin_key');
@@ -1010,7 +1027,11 @@
         return copy.sort((a, b) => (parseInt(b.guests) || 0) - (parseInt(a.guests) || 0));
       } else if (currentSort === 'status') {
         const order = { pending: 1, confirmed: 2, arrived: 3, missed: 4, cancelled: 5 };
-        return copy.sort((a, b) => (order[(a.status || '').toLowerCase()] || 99) - (order[(b.status || '').toLowerCase()] || 99));
+        return copy.sort((a, b) => {
+          const statusDiff = (order[(a.status || '').toLowerCase()] || 99) - (order[(b.status || '').toLowerCase()] || 99);
+          if (statusDiff !== 0) return statusDiff;
+          return new Date(b.createdat || b.createdAt || 0) - new Date(a.createdat || a.createdAt || 0);
+        });
       }
       return copy;
     }
@@ -1065,7 +1086,10 @@
             Occasion: <span style="${!r.occasion ? 'color: var(--text-muted); font-style: italic;' : ''}">${esc(r.occasion || 'None selected')}</span>
           </div>
           
-          ${r.notes ? `<div class="notes-box" title="${esc(r.notes)}">"${esc(r.notes)}"${r.notes.length > 50 ? '<span class="see-details" onclick="alert(this.parentElement.title)">See details</span>' : ''}</div>` : `<div class="notes-box empty">Special Request: None</div>`}
+          ${r.notes ? `
+            <div class="notes-box" style="margin-bottom: ${r.notes.trim().split(' ').length > 5 ? '4px' : '16px'};">"${esc(r.notes)}"</div>
+            ${r.notes.trim().split(' ').length > 5 ? `<div style="text-align: right; margin-bottom: 12px;"><span class="see-details" style="cursor: pointer; color: var(--gold); font-size: 13px; font-weight: 600; text-decoration: underline;" data-notes="${esc(r.notes)}" data-name="${esc(r.name)}" data-code="${esc(r.unique_code || 'N/A')}" onclick="openDetailsModal(this.dataset.notes, this.dataset.name, this.dataset.code)">See details</span></div>` : ''}
+          ` : `<div class="notes-box empty">Special Request: None</div>`}
           
           <div class="timestamp">Received: ${new Date(r.createdat || r.createdAt).toLocaleString()}</div>
           
@@ -1159,7 +1183,6 @@
 
         const payload = await res.json();
         const freshData = payload.data || payload;
-        freshData.reverse(); // Newest first
 
         const hasChanged = JSON.stringify(freshData) !== JSON.stringify(allData);
 
@@ -1386,6 +1409,22 @@
         </div>
       `).join('');
     }
+
+    function openDetailsModal(text, name, code) {
+      document.getElementById('detailsModalTitle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Special Request - ${name} (${code})`;
+      document.getElementById('detailsModalText').innerText = text;
+      document.getElementById('detailsModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('detailsModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeDetailsModal();
+    });
 
     function openAddUserModal() {
       document.getElementById('addUserModal').style.display = 'flex';

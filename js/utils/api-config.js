@@ -13,10 +13,10 @@ const DEFAULT_PROD_API_URL = 'https://backend-api-1-qhnn.onrender.com';
  */
 function getApiBaseUrl() {
   const hostname = window.location.hostname;
-  const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+  const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.');
   
   if (isLocal) {
-    return 'http://localhost:3001';
+    return `http://${hostname}:3001`;
   }
   
   if (window.VITE_API_URL) {

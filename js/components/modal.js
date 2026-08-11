@@ -40,7 +40,7 @@ function openDishModal(name) {
   const pillHtml = ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('');
   document.getElementById('dishModalPills').innerHTML = pillHtml;
 
-  document.getElementById('dishModalReserveBtn').innerText = `Reserve Table for "${foundItem.n}"`;
+  document.getElementById('dishModalReserveBtn').innerText = `Reserve a Table`;
   
   const modalEl = document.getElementById('dishDetailModal');
   if (modalEl) modalEl.classList.add('active');
