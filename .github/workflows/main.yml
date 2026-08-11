@@ -28,6 +28,6 @@ jobs:
         with:
           server: arenguadetela@arenguadetela.mengede.app
           username: arenguadetela.mengede.app
-          password: ${{ secrets.FTP_SECRET }}
+          password: ${{ secrets.ftp_secret }}
           local-dir: dist/
           server-dir: /
