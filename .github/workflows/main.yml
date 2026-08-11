@@ -26,7 +26,7 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: arenguadetela@arenguadetela.mengede.app
+          server: ftp.mengede.app
           username: arenguadetela.mengede.app
           password: ${{ secrets.ftp_secret }}
           local-dir: dist/
