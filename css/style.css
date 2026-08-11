@@ -447,13 +447,13 @@
     }
 
     .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 8vw, 95px);
-      margin: 0 auto 16px;
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(50px, 7vw, 90px);
+      font-weight: 700;
+      color: var(--gold);
+      margin: 0 auto 10px;
       line-height: 1.1;
-      font-weight: 600;
-      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-      letter-spacing: -1px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
     }
 
     .hero h1 span.gold {
@@ -602,23 +602,26 @@
       }
 
       .hero h1 {
-        font-size: clamp(32px, 8.5vw, 44px);
+        font-family: 'Dancing Script', cursive;
+        font-size: clamp(42px, 10vw, 56px);
         line-height: 1.1;
-        margin: 0 auto 6px;
+        margin: 0 auto 12px;
+        color: var(--gold);
       }
 
       .hero p {
-        font-size: 13.5px;
-        line-height: 1.4;
+        font-size: 14px;
+        line-height: 1.5;
         margin: 0 auto 16px;
         max-width: 320px;
+        color: rgba(255, 255, 255, 0.85);
       }
 
       /* Side-by-side flex row CTA buttons */
       .hero-btn-row {
         display: flex !important;
         flex-direction: row !important;
-        gap: 10px !important;
+        gap: 12px !important;
         width: 100% !important;
       }
 
@@ -626,9 +629,10 @@
         flex: 1 !important;
         width: 50% !important;
         min-width: 0 !important;
-        padding: 12px 6px !important;
+        padding: 10px 4px !important;
         font-size: 11px !important;
-        letter-spacing: 0.8px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.5px !important;
         text-align: center !important;
         justify-content: center !important;
         white-space: nowrap !important;
