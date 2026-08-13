@@ -36,6 +36,7 @@
       <li><a href="#" onclick="navigateTo('view-about'); return false;">About</a></li>
       <li><a href="#" onclick="navigateTo('view-full-menu'); return false;">Menu</a></li>
       <li><a href="#" onclick="navigateTo('view-events'); return false;">Events</a></li>
+      <li><a href="#" onclick="navigateTo('view-gallery'); return false;">Gallery</a></li>
       <li><a href="#" onclick="navigateTo('view-rewards'); return false;">Rewards</a></li>
       <li><a href="#" onclick="navigateTo('view-reservations'); return false;">Reservations</a></li>
       <li><a href="#" onclick="navigateTo('view-contact'); return false;">Contact</a></li>
@@ -49,20 +50,37 @@
   <div id="main-scroll-page">
 
     <div class="page-view" id="view-home">
-      <!-- 2. HERO -->
+      <!-- 2. HERO with Video Background -->
       <header id="hero" class="hero">
+        <!-- Optimized Video Background -->
+        <video 
+          class="hero-video" 
+          autoplay 
+          muted 
+          loop 
+          playsinline
+          preload="metadata"
+          poster="/public/bg%20image.jpg">
+          <source src="/public/hero-background.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        
+        <div class="hero-overlay"></div>
+        
         <div class="hero-content">
           <div class="hero-frame">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
 
             <div class="hero-eyebrow">
-              <span class="eyebrow-dot">·</span> THE RITUAL OF THE TABLE <span class="eyebrow-dot">·</span>
+              <span class="eyebrow-dot">·</span> ARENGUADE TILA <span class="eyebrow-dot">·</span>
             </div>
 
-            <h1>More Than Just a Meal</h1>
+            <h1 style="font-family: 'Noto Serif Ethiopic', serif; letter-spacing: 8px; font-weight: 700; text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);">
+              ገራሚ <span style="font-family: 'Playfair Display', serif; font-weight: 400; letter-spacing: 2px;">meals</span>
+            </h1>
 
-            <p>Gather, slow down, and eat well together.</p>
+            <p style="font-size: clamp(14px, 1.5vw, 16px); font-weight: 300; letter-spacing: 1px;">Minimalist brand identity. Contemporary typography. Modern elegance.</p>
 
             <div class="hero-btn-row">
               <a href="#" onclick="navigateTo('view-reservations'); return false;"
@@ -457,6 +475,7 @@
             <li><a href="#" onclick="navigateTo('view-about'); return false;">About Us</a></li>
             <li><a href="#" onclick="navigateTo('view-full-menu'); return false;">Menu</a></li>
             <li><a href="#" onclick="navigateTo('view-events'); return false;">Events</a></li>
+            <li><a href="#" onclick="navigateTo('view-gallery'); return false;">Gallery</a></li>
             <li><a href="#" onclick="navigateTo('view-rewards'); return false;">Rewards</a></li>
           </ul>
         </div>
@@ -485,6 +504,42 @@
 
 
   </div>
+
+  <!-- FULL GALLERY PAGE -->
+  <div id="full-gallery-page"
+    style="display: none; min-height: 100vh; background: #0B0E14; color: #FFFFFF; font-family: 'Poppins', sans-serif;">
+    
+    <!-- Gallery Page Header -->
+    <div style="padding: 80px 5% 40px; position: relative; z-index: 10;">
+      <div class="container" style="max-width: 1400px;">
+        <div class="text-center mb-5">
+          <a href="#" onclick="navigateTo('view-home'); return false;" class="nav-brand" style="display: inline-block; margin-bottom: 32px;">
+            <img src="/arenguadetilalogo.png"
+              onerror="if(!this.tried){this.tried=true;this.src='public/arenguadetilalogo.png';}"
+              alt="Arenguade Tila Logo" style="height: 56px; max-height: 56px; width: auto;">
+          </a>
+          <h1 class="gold" style="font-size: 48px; font-family: 'Playfair Display', serif; margin-bottom: 16px;">Our Gallery</h1>
+          <p style="color: #9ca3af; font-size: 16px; max-width: 600px; margin: 0 auto;">Step into the world of Arenguade Tila. Discover the warmth of our ambiance, the artistry of our cuisine, and the moments that make dining with us unforgettable.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery Content -->
+    <div style="padding: 40px 5%; position: relative; z-index: 5;">
+      <div class="container" style="max-width: 1400px;">
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Gallery items will be populated here -->
+        </div>
+
+        <div style="text-align: center; margin-top: 80px; padding-bottom: 60px;">
+          <a href="#" onclick="navigateTo('view-home'); return false;" class="btn pulse-btn" style="padding: 14px 32px; font-size: 12px; letter-spacing: 1px;">
+            ← Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- OTHER MODALS -->
 
 
@@ -508,6 +563,7 @@
   <script src="/js/components/menu.js"></script>
   <script src="/js/components/reservation.js"></script>
   <script src="/js/components/rewards.js"></script>
+  <script src="/js/components/gallery.js"></script>
   <script src="/js/main.js"></script>
 </body>
 

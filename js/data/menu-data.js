@@ -99,5 +99,7 @@ var eventsList = [
   { i: '🎤', t: 'Open Mic', s: '1st & 3rd Saturday', d: 'Music, poetry, comedy & storytelling — celebrating local voices.' },
   { i: '🎵', t: 'Live Music', s: 'Every Sunday', d: 'Unwind to live performances from the best local musicians in the city.' },
   { i: '🎧', t: 'DJ Night', s: 'Every Friday & Saturday', d: 'Resident DJs spinning Afrobeats, R&B & global hits. The floors come alive after dark.' },
-  { i: '🥂', t: 'Weekend Supper', s: 'Sat & Sun, 6PM–10PM', d: 'Handcrafted cocktails, signature mocktails & a rich dinner spread. A meal that becomes a memory.' }
+  { i: '🥂', t: 'Weekend Supper', s: 'Sat & Sun, 6PM–10PM', d: 'Handcrafted cocktails, signature mocktails & a rich dinner spread. A meal that becomes a memory.' },
+  { i: '🎨', t: 'Live Sketch & Painting', s: '2nd & 4th Saturday', d: 'Local artists create live art while you dine. Original pieces available for purchase. A creative evening you\'ll cherish.' },
+  { i: '🖼️', t: 'Art Exhibition', s: '1st Sunday of Month', d: 'Curated showcase of Ethiopian and contemporary art. Meet the artists, enjoy wine, celebrate creativity. Admission free with reservation.' }
 ];
