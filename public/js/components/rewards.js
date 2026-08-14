@@ -170,7 +170,11 @@ function renderEventsList() {
   const eventsContainer = document.getElementById('weeklyEvents');
   if (!eventsContainer || !eventsList) return;
 
-  eventsContainer.innerHTML = eventsList.map((e, index) => `
+  // Show first 6 events
+  const visibleEvents = eventsList.slice(0, 6);
+  const hiddenEvents = eventsList.slice(6);
+
+  let html = visibleEvents.map((e, index) => `
     <div class="event-card glass reveal" style="--delay: ${index * 0.1}s">
       <div style="font-size:40px; margin-bottom:10px;">${e.i}</div>
       <h3 style="font-size:24px;">${e.t}</h3>
@@ -179,4 +183,62 @@ function renderEventsList() {
       <button class="btn btn-o btn-sm" onclick="navigateTo('view-reservations');">Book Table</button>
     </div>
   `).join('');
+
+  eventsContainer.innerHTML = html;
+
+  // Add hidden events and show more button after rendering initial events
+  if (hiddenEvents.length > 0) {
+    const eventsSection = eventsContainer.parentElement;
+    
+    let hiddenHtml = `
+      <div id="hiddenEventsContainer" style="display: none; grid-column: 1 / -1; padding-top: 24px;">
+        <div class="grid grid-2" style="gap: 24px;">
+    `;
+    
+    hiddenEvents.forEach((e, index) => {
+      hiddenHtml += `
+        <div class="event-card glass reveal" style="--delay: ${(6 + index) * 0.1}s">
+          <div style="font-size:40px; margin-bottom:10px;">${e.i}</div>
+          <h3 style="font-size:24px;">${e.t}</h3>
+          <div><span class="event-pill">${e.s}</span></div>
+          <p class="event-desc">${e.d}</p>
+          <button class="btn btn-o btn-sm" onclick="navigateTo('view-reservations');">Book Table</button>
+        </div>
+      `;
+    });
+    
+    hiddenHtml += `
+        </div>
+      </div>
+      <div style="grid-column: 1 / -1; text-align: center; margin-top: 32px;">
+        <button class="btn pulse-btn" onclick="toggleHiddenEvents()" id="showMoreBtn" 
+          style="padding: 12px 32px; font-size: 12px; letter-spacing: 1px;">
+          Show More Events
+        </button>
+      </div>
+    `;
+
+    eventsContainer.insertAdjacentHTML('afterend', hiddenHtml);
+  }
+}
+
+/**
+ * Toggle hidden events visibility
+ */
+function toggleHiddenEvents() {
+  const hiddenContainer = document.getElementById('hiddenEventsContainer');
+  const showMoreBtn = document.getElementById('showMoreBtn');
+  
+  if (!hiddenContainer || !showMoreBtn) return;
+
+  const isHidden = hiddenContainer.style.display === 'none';
+  
+  if (isHidden) {
+    hiddenContainer.style.display = 'block';
+    hiddenContainer.style.animation = 'fadeIn 0.6s ease';
+    showMoreBtn.textContent = 'Show Less Events';
+  } else {
+    hiddenContainer.style.display = 'none';
+    showMoreBtn.textContent = 'Show More Events';
+  }
 }
