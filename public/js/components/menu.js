@@ -6,16 +6,37 @@ let activeFeaturedTab = "የፆም ምሳ";
 let fullMenuActiveTab = "ሁሉንም / All Items";
 
 /**
+ * Builds the card media layer (background photo or themed fallback)
+ * @param {Object} item Menu item
+ * @returns {string}
+ */
+function renderMenuMediaHtml(item) {
+  const src = item.img || item.image || item.src || '';
+  const alt = item.en || item.n || 'Menu item';
+
+  if (src) {
+    return `
+      <div class="luxury-card-media">
+        <img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" loading="lazy"
+          onerror="this.closest('.luxury-card')?.classList.add('luxury-card--no-photo'); this.remove();">
+      </div>`;
+  }
+
+  return `<div class="luxury-card-media luxury-card-media--fallback" aria-hidden="true"></div>`;
+}
+
+/**
  * Generates unified HTML string for luxury menu cards
  * @param {Object} item Menu item data object
  * @param {number} index Animation index
+ * @param {string} [category] Optional category label
  * @returns {string} HTML markup string
  */
-function renderLuxuryCardHtml(item, index) {
+function renderLuxuryCardHtml(item, index, category) {
   const safeName = (item.n || '').replace(/'/g, "\\'");
+  const hasPhoto = !!(item.img || item.image || item.src);
   
-  // Clean button to view details
-  let ingredientMarkup = `<button onclick="event.stopPropagation(); openDishModal('${safeName}')" style="background: transparent; border: 1px solid rgba(212, 175, 55, 0.4); color: var(--gold); padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; margin-top: 10px; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(212,175,55,0.1)'" onmouseout="this.style.background='transparent'">View Details</button>`;
+  const enSubtitle = (item.en && item.en !== item.n) ? item.en : (category || '');
 
   let heatHtml = '';
   if (item.heat) {
@@ -26,28 +47,23 @@ function renderLuxuryCardHtml(item, index) {
     </div>`;
   }
 
-  const pairHtml = item.pair ? `<div>${item.pair}</div>` : '';
-  const enSubtitle = (item.en && item.en !== item.n) ? item.en : '';
+  const pairHtml = item.pair ? `<div class="luxury-pair-line">${item.pair}</div>` : '';
+  const metaHtml = (heatHtml || pairHtml)
+    ? `<div class="luxury-pair-box">${heatHtml}${pairHtml}</div>`
+    : '';
 
   return `
-    <div class="luxury-card reveal active w-full h-full min-h-[220px] flex flex-col justify-between" onclick="openDishModal('${safeName}')" style="animation-delay: ${index * 0.05}s; height: 100%;">
-      <div class="luxury-card-body flex flex-col justify-between" style="width: 100%; height: 100%;">
-        <div>
-          <div class="luxury-card-head">
-            <h3>${item.n}</h3>
-            <span class="luxury-card-price">${item.p} ETB</span>
-          </div>
+    <div class="luxury-card ${hasPhoto ? 'luxury-card--photo' : 'luxury-card--no-photo'} reveal active" onclick="openDishModal('${safeName}')" style="animation-delay: ${index * 0.05}s;">
+      ${renderMenuMediaHtml(item)}
+      <div class="luxury-card-overlay" aria-hidden="true"></div>
+      <span class="luxury-card-price">${item.p} ETB</span>
+      <div class="luxury-card-body">
+        <div class="luxury-card-main">
+          <h3 class="luxury-card-title">${item.n}</h3>
           ${enSubtitle ? `<div class="luxury-card-sub">${enSubtitle}</div>` : ''}
-          ${ingredientMarkup}
+          <button type="button" onclick="event.stopPropagation(); openDishModal('${safeName}')" class="luxury-view-btn">View Details</button>
         </div>
-        
-        <div class="luxury-card-foot mt-auto">
-          <div class="luxury-pair-box">
-            ${heatHtml}
-            ${pairHtml}
-          </div>
-          <button class="add-btn" onclick="event.stopPropagation(); openDishModal('${safeName}');" title="Quick View & Reserve">+</button>
-        </div>
+        ${metaHtml}
       </div>
     </div>
   `;
@@ -65,15 +81,15 @@ function renderFeaturedMenu() {
 
   // Curate 6 top signature items across categories for a balanced 2-row x 3-column layout
   const featuredItems = [
-    menuData["የፆም ምሳ"][1], // Fasting Agalta Platter
-    menuData["የፆም ምሳ"][3], // Tegabino Shiro
-    menuData["የፍስክ ምሳ"][0], // Fisik Agalta Platter
-    (menuData["ክትፎ"] && menuData["ክትፎ"][2]) || menuData["የፍስክ ምሳ"][1], // Special Kitfo or Banatu
-    (menuData["Pizza"] && menuData["Pizza"][5]) || menuData["Pizza"][0], // Meat Lover Pizza
-    (menuData["Salad"] && menuData["Salad"][0]) // Arenguade Tila Special Salad
-  ].filter(Boolean);
+    { item: menuData["የፆም ምሳ"][1], cat: "የፆም ምሳ" },
+    { item: menuData["የፆም ምሳ"][3], cat: "የፆም ምሳ" },
+    { item: menuData["የፍስክ ምሳ"][0], cat: "የፍስክ ምሳ" },
+    { item: (menuData["ክትፎ"] && menuData["ክትፎ"][2]) || menuData["የፍስክ ምሳ"][1], cat: "ክትፎ" },
+    { item: (menuData["Pizza"] && menuData["Pizza"][5]) || menuData["Pizza"][0], cat: "Pizza" },
+    { item: (menuData["Salad"] && menuData["Salad"][0]), cat: "Salad" }
+  ].filter(entry => entry.item);
 
-  gridCont.innerHTML = featuredItems.map((itm, i) => renderLuxuryCardHtml(itm, i)).join('');
+  gridCont.innerHTML = featuredItems.map((entry, i) => renderLuxuryCardHtml(entry.item, i, entry.cat)).join('');
 }
 
 function handleMenuFilter() {
@@ -122,10 +138,10 @@ function renderFullMenu() {
     if (items.length > 0) {
       foundAny = true;
       renderHtml += `
-        <div class="w-full max-w-7xl mx-auto px-4" style="margin-bottom: 50px; display: block; clear: both;" id="cat-${cat.replace(/\s+/g, '-')}">
-          <h3 style="color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.3); width: 100%; display: block;">${cat}</h3>
-          <div class="grid grid-4" style="gap: 24px;">
-            ${items.map((itm, i) => renderLuxuryCardHtml(itm, i)).join('')}
+        <div class="menu-category-block" id="cat-${cat.replace(/\s+/g, '-')}">
+          <h3 class="menu-category-title">${cat}</h3>
+          <div class="menu-cards-grid">
+            ${items.map((itm, i) => renderLuxuryCardHtml(itm, i, cat)).join('')}
           </div>
         </div>
       `;
@@ -157,7 +173,6 @@ function switchFullTab(tabName) {
       gridCont.style.opacity = '1';
       gridCont.style.transform = 'translateY(0)';
       
-      // If we clicked a specific tab, it's nice to ensure the top of the menu is visible
       const stickyHeader = document.getElementById('fullMenuTabs');
       if (stickyHeader) {
         const offsetPosition = stickyHeader.getBoundingClientRect().top + window.scrollY - 100;

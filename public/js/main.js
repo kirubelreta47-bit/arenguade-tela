@@ -37,13 +37,21 @@ function closeMenu() {
 function navigateTo(viewId) {
   const mainPage = document.getElementById('main-scroll-page');
   const fullMenuPage = document.getElementById('full-menu-page');
+  const fullGalleryPage = document.getElementById('full-gallery-page');
+  const siteFooter = document.querySelector('footer');
 
-  if (!mainPage || !fullMenuPage) return;
+  if (!mainPage || !fullMenuPage || !fullGalleryPage) return;
+
+  const setFooterVisible = (visible) => {
+    if (siteFooter) siteFooter.style.display = visible ? '' : 'none';
+  };
 
   // Handle overlay views (Rewards, Reservations)
   if (OVERLAY_VIEWS.includes(viewId)) {
     mainPage.style.display = 'block';
     fullMenuPage.style.display = 'none';
+    fullGalleryPage.style.display = 'none';
+    setFooterVisible(true);
     closeOverlays();
     
     const overlay = document.getElementById(viewId);
@@ -61,10 +69,20 @@ function navigateTo(viewId) {
   if (viewId === 'view-full-menu') {
     mainPage.style.display = 'none';
     fullMenuPage.style.display = 'block';
+    fullGalleryPage.style.display = 'none';
+    setFooterVisible(false);
+    window.scrollTo(0, 0);
+  } else if (viewId === 'view-gallery') {
+    mainPage.style.display = 'none';
+    fullMenuPage.style.display = 'none';
+    fullGalleryPage.style.display = 'block';
+    setFooterVisible(false);
     window.scrollTo(0, 0);
   } else {
     mainPage.style.display = 'block';
     fullMenuPage.style.display = 'none';
+    fullGalleryPage.style.display = 'none';
+    setFooterVisible(true);
 
     const el = document.getElementById(viewId);
     if (el) {
@@ -116,6 +134,44 @@ function initScrollAnimations() {
 }
 
 /**
+ * Optimize hero video for fast loading
+ */
+function optimizeHeroVideo() {
+  const video = document.querySelector('.hero-video');
+  if (!video) return;
+
+  // Ensure video plays immediately when loaded
+  video.addEventListener('loadedmetadata', () => {
+    video.play().catch(err => {
+      console.log('Video autoplay prevented:', err);
+      // Fallback if autoplay is blocked
+    });
+  });
+
+  // Handle cases where video is already loaded
+  if (video.readyState >= 1) {
+    video.play().catch(err => {
+      console.log('Video autoplay prevented:', err);
+    });
+  }
+
+  // Set up intersection observer for video performance
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(err => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+    
+    observer.observe(video);
+  }
+}
+
+/**
  * Application Entry Point Initialization
  */
 document.addEventListener('DOMContentLoaded', () => {
@@ -126,6 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFeaturedMenu();
   renderFullMenu();
   renderEventsList();
+  initializeGallery();
+  optimizeHeroVideo();
   
   drawWheel();
   initScrollAnimations();
