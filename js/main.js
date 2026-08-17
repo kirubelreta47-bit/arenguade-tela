@@ -118,7 +118,7 @@ function initNavbarScroll() {
 }
 
 /**
- * Intersection Observer for scroll animations
+ * Intersection Observer for scroll animations with responsive margin
  */
 function initScrollAnimations() {
   const observer = new IntersectionObserver(entries => {
@@ -128,44 +128,39 @@ function initScrollAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.05, rootMargin: '60px 0px 60px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
 /**
- * Optimize hero video for fast loading
+ * Optimize hero video for fast loading and instant playback
  */
 function optimizeHeroVideo() {
   const video = document.querySelector('.hero-video');
   if (!video) return;
 
-  // Ensure video plays immediately when loaded
-  video.addEventListener('loadedmetadata', () => {
-    video.play().catch(err => {
-      console.log('Video autoplay prevented:', err);
-      // Fallback if autoplay is blocked
-    });
-  });
+  video.muted = true;
+  video.defaultMuted = true;
 
-  // Handle cases where video is already loaded
-  if (video.readyState >= 1) {
-    video.play().catch(err => {
-      console.log('Video autoplay prevented:', err);
+  const playPromise = video.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      video.addEventListener('canplay', () => video.play().catch(() => {}), { once: true });
     });
   }
 
-  // Set up intersection observer for video performance
+  // Pause when offscreen to conserve GPU/CPU, resume when visible
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          video.play().catch(err => {});
+          video.play().catch(() => {});
         } else {
           video.pause();
         }
       });
-    }, { threshold: 0.25 });
+    }, { threshold: 0.1 });
     
     observer.observe(video);
   }

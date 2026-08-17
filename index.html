@@ -9,6 +9,7 @@
     content="Experience authentic Ethiopian cuisine, handcrafted coffee, and unforgettable evenings at Arenguade Tila.">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+  <link rel="preload" as="image" href="/bg%20image.jpg" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -35,8 +36,8 @@
       <li><a href="#" onclick="navigateTo('view-home'); return false;">Home</a></li>
       <li><a href="#" onclick="navigateTo('view-about'); return false;">About</a></li>
       <li><a href="#" onclick="navigateTo('view-full-menu'); return false;">Menu</a></li>
-      <li><a href="#" onclick="navigateTo('view-events'); return false;">Events</a></li>
       <li><a href="#" onclick="navigateTo('view-gallery'); return false;">Gallery</a></li>
+      <li><a href="#" onclick="navigateTo('view-events'); return false;">Events</a></li>
       <li><a href="#" onclick="navigateTo('view-rewards'); return false;">Rewards</a></li>
       <li><a href="#" onclick="navigateTo('view-reservations'); return false;">Reservations</a></li>
       <li><a href="#" onclick="navigateTo('view-contact'); return false;">Contact</a></li>
@@ -52,14 +53,14 @@
     <div class="page-view" id="view-home">
       <!-- 2. HERO with Video Background -->
       <header id="hero" class="hero">
-        <!-- Optimized Video Background -->
+        <!-- Optimized Video Background with Instant Poster -->
         <video 
           class="hero-video" 
           autoplay 
           muted 
           loop 
           playsinline
-          preload="metadata"
+          preload="auto"
           poster="/bg%20image.jpg">
           <source src="/hero-background.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
@@ -76,8 +77,9 @@
               <span class="eyebrow-dot">·</span> ARENGUADE TILA <span class="eyebrow-dot">·</span>
             </div>
 
-            <h1 style="font-family: 'Noto Serif Ethiopic', serif; letter-spacing: 8px; font-weight: 700; text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);">
-              ገራሚ <span style="font-family: 'Playfair Display', serif; font-weight: 400; letter-spacing: 2px;">meals</span>
+            <h1 class="hero-title">
+              <span class="hero-title-amharic">ገራሚ</span>
+              <span class="hero-title-sub">MEALS</span>
             </h1>
 
             <p style="font-size: clamp(14px, 1.5vw, 16px); font-weight: 300; letter-spacing: 1px;">Minimalist brand identity. Contemporary typography. Modern elegance.</p>
