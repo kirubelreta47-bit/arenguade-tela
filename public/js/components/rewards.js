@@ -3,21 +3,23 @@
    ========================================================================== */
 
 const WHEEL_PRIZES = [
-  'Free Coffee', 
-  'Try Again', 
-  'Free Dessert', 
-  '10% Off', 
-  'Combo Platter', 
-  'Try Again', 
-  'Free Drink', 
-  'Try Again'
+  'Free Coffee',        // Index 0: Rare win (1 in 150)
+  'Special Burger',     // Index 1: Display item (0% win)
+  'Try Again',          // Index 2: Common (99.33%)
+  'House Pizza',        // Index 3: Display item (0% win)
+  'Free Dessert',       // Index 4: Rare win (1 in 150)
+  'Try Again',          // Index 5: Common (99.33%)
+  'Strawberry Juice',   // Index 6: Display item (0% win)
+  'Free Drink',         // Index 7: Rare win (1 in 150)
+  'Combo Platter',      // Index 8: Display item (0% win)
+  'Try Again'           // Index 9: Common (99.33%)
 ];
 
 let wheelDeg = 0;
 let isSpinning = false;
 
 /**
- * Draws the canvas wheel graphics
+ * Draws the canvas wheel graphics in deep dark gold and midnight luxury theme
  */
 function drawWheel() {
   const canvas = document.getElementById('wheel');
@@ -32,20 +34,49 @@ function drawWheel() {
   ctx.clearRect(0, 0, cw, ch);
   for (let i = 0; i < WHEEL_PRIZES.length; i++) {
     ctx.beginPath();
-    ctx.fillStyle = i % 2 === 0 ? '#1A2333' : '#FFD13B';
+    // Alternating between deep luxury midnight and rich dark gold
+    ctx.fillStyle = i % 2 === 0 ? '#080F1D' : '#A67C1E';
     ctx.moveTo(center, center);
-    ctx.arc(center, center, center, i * arc, (i + 1) * arc);
+    ctx.arc(center, center, center - 2, i * arc, (i + 1) * arc);
     ctx.fill();
 
+    // Slice border in dark gold
+    ctx.strokeStyle = 'rgba(166, 124, 30, 0.45)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Text label
     ctx.save();
     ctx.translate(center, center);
     ctx.rotate(i * arc + arc / 2);
     ctx.textAlign = "right";
-    ctx.fillStyle = i % 2 === 0 ? '#FFFFFF' : '#030811';
-    ctx.font = "bold 13px Poppins";
-    ctx.fillText(WHEEL_PRIZES[i], center - 30, 5);
+    ctx.fillStyle = i % 2 === 0 ? '#D4AF37' : '#030811';
+    ctx.font = "bold 11.5px 'Outfit', 'Poppins', sans-serif";
+    ctx.fillText(WHEEL_PRIZES[i], center - 22, 4);
     ctx.restore();
   }
+
+  // Draw elegant dark gold center hub
+  ctx.beginPath();
+  ctx.arc(center, center, 24, 0, Math.PI * 2);
+  ctx.fillStyle = '#A67C1E';
+  ctx.fill();
+  ctx.strokeStyle = '#D4AF37';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Inner dark dot in hub
+  ctx.beginPath();
+  ctx.arc(center, center, 12, 0, Math.PI * 2);
+  ctx.fillStyle = '#030811';
+  ctx.fill();
+
+  // Outer dark gold rim
+  ctx.beginPath();
+  ctx.arc(center, center, center - 2, 0, Math.PI * 2);
+  ctx.strokeStyle = '#A67C1E';
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
 }
 
 /**
@@ -102,6 +133,9 @@ function scheduleWinSound(time) {
 
 /**
  * Executes spin wheel rotation and audio feedback
+ * Odds: 1 in 150 chance to win Free Coffee, Free Dessert, or Free Drink.
+ * Other times (149 in 150) lands on Try Again.
+ * Display items (Special Burger, House Pizza, Strawberry Juice, Combo Platter) never land (0%).
  */
 async function spinWheel() {
   if (isSpinning) return;
@@ -115,14 +149,21 @@ async function spinWheel() {
   const segmentAngle = 360 / WHEEL_PRIZES.length;
 
   let winSegment;
-  do {
-    winSegment = Math.floor(Math.random() * WHEEL_PRIZES.length);
-  } while (WHEEL_PRIZES[winSegment] !== 'Free Coffee' && WHEEL_PRIZES[winSegment] !== 'Try Again');
+  const rareWinChance = Math.floor(Math.random() * 150) === 0; // 1 in 150
 
-  let targetDeg = 247.5 - (winSegment * segmentAngle);
+  if (rareWinChance) {
+    const winOptions = [0, 4, 7]; // Free Coffee, Free Dessert, Free Drink
+    winSegment = winOptions[Math.floor(Math.random() * winOptions.length)];
+  } else {
+    const tryAgainOptions = [2, 5, 9]; // Try Again slices
+    winSegment = tryAgainOptions[Math.floor(Math.random() * tryAgainOptions.length)];
+  }
+
+  let targetDeg = 270 - ((winSegment + 0.5) * segmentAngle);
   targetDeg = (targetDeg % 360 + 360) % 360;
 
-  const offset = Math.floor(Math.random() * 30) - 15;
+  // Small organic offset within slice
+  const offset = Math.floor(Math.random() * (segmentAngle * 0.5)) - (segmentAngle * 0.25);
   targetDeg += offset;
 
   const currentMod = wheelDeg % 360;
@@ -155,9 +196,9 @@ async function spinWheel() {
     isSpinning = false;
     if (resText) {
       if (WHEEL_PRIZES[winSegment] === 'Try Again') {
-        resText.innerText = 'Ah, close! Try Again!';
+        resText.innerText = 'Ah, so close! Try Again next time!';
       } else {
-        resText.innerText = `You won: ${WHEEL_PRIZES[winSegment]}!`;
+        resText.innerText = `🎉 Congratulations! You won: ${WHEEL_PRIZES[winSegment]}!`;
       }
     }
   }, 4500);
@@ -169,6 +210,12 @@ async function spinWheel() {
 function renderEventsList() {
   const eventsContainer = document.getElementById('weeklyEvents');
   if (!eventsContainer || !eventsList) return;
+
+  // Clean up any previously injected dynamic wrappers
+  const existingHidden = document.getElementById('hiddenEventsContainer');
+  if (existingHidden) existingHidden.remove();
+  const existingBtn = document.getElementById('showMoreEventsWrapper');
+  if (existingBtn) existingBtn.remove();
 
   // Show first 6 events
   const visibleEvents = eventsList.slice(0, 6);
@@ -186,10 +233,8 @@ function renderEventsList() {
 
   eventsContainer.innerHTML = html;
 
-  // Add hidden events and show more button after rendering initial events
+  // Add hidden events and show more button if additional events exist
   if (hiddenEvents.length > 0) {
-    const eventsSection = eventsContainer.parentElement;
-    
     let hiddenHtml = `
       <div id="hiddenEventsContainer" style="display: none; grid-column: 1 / -1; padding-top: 24px;">
         <div class="grid grid-2" style="gap: 24px;">
@@ -210,7 +255,7 @@ function renderEventsList() {
     hiddenHtml += `
         </div>
       </div>
-      <div style="grid-column: 1 / -1; text-align: center; margin-top: 32px;">
+      <div id="showMoreEventsWrapper" style="grid-column: 1 / -1; text-align: center; margin-top: 32px;">
         <button class="btn pulse-btn" onclick="toggleHiddenEvents()" id="showMoreBtn" 
           style="padding: 12px 32px; font-size: 12px; letter-spacing: 1px;">
           Show More Events

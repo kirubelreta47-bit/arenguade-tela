@@ -44,8 +44,16 @@ function renderStars(val) {
  * Initializes date picker min dates for native date inputs
  */
 function initDatePicker() {
-  // Prevent past dates in native date inputs
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
   document.querySelectorAll('input[type="date"]').forEach(inputEl => {
-    inputEl.min = new Date().toISOString().split('T')[0];
+    inputEl.min = todayStr;
+    if (!inputEl.value) {
+      inputEl.value = todayStr;
+    }
   });
 }

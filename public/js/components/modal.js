@@ -34,7 +34,7 @@ function openDishModal(name) {
 
   let ingredients = foundItem.ings;
   if (!ingredients) {
-    ingredients = foundItem.d.split(/·|,/).map(x => x.trim()).filter(x => x.length > 0);
+    ingredients = foundItem.d.split(/·|,|፣|\//).map(x => x.trim()).filter(x => x.length > 0);
   }
 
   const pillHtml = ingredients.map(ing => `<span class="luxury-pill">${ing}</span>`).join('');
@@ -105,7 +105,7 @@ function closeLightbox() {
 }
 
 function lbNavigate(dir) {
-  if (event) event.stopPropagation();
+  if (window.event) window.event.stopPropagation();
   const lbImg = document.getElementById('lb-img');
   if (lbImages.length === 0) return;
   

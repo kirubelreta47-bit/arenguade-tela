@@ -1,191 +1,157 @@
 /* ==========================================================================
-   ARENGUADE TILA - GALLERY COMPONENT
-   Showcase grids for restaurant interior + food (ready for real photos).
-   --------------------------------------------------------------------------
-   HOW TO ADD PHOTOS:
-   Add a `src` field to any item:
-     { title: 'Kitfo Special', cap: 'Hand-chopped beef', src: '/images/kitfo.jpg' }
-   Items WITHOUT a src render as designed placeholders.
+   ARENGUADE TILA - PHOTO GALLERY COMPONENT
+   Compact Multi-Style Mosaic Layout & Full-Screen Lightbox
    ========================================================================== */
 
-const GALLERY_SECTIONS = [
+const GALLERY_ITEMS = [
+  // --- First 3: Interior ---
   {
-    id: 'interior',
-    num: '01',
-    icon: '🛋️',
-    title: 'Interior & Ambiance',
-    amh: 'የውስጥ ማስጌጫ',
-    tagline: 'Deep blues, warm gold and candlelight — rooms built for long evenings and quiet conversations.',
-    layout: 'showcase',
-    accent: '#7C93B8',
-    items: [
-      { title: 'The Main Dining Hall', cap: 'Where evenings begin' },
-      { title: 'Golden Hour Seating', cap: 'Light through the windows' },
-      { title: 'Private Corner', cap: 'Quiet tables for two' },
-      { title: 'Candlelit Tables', cap: 'The after-dark glow' },
-      { title: 'The Lounge', cap: 'Low seats, slow drinks' },
-      { title: 'Window Views', cap: 'Kenenisa Avenue below' },
-      { title: 'Bar & Counter', cap: 'Where the night opens' },
-      { title: 'Terrace Glow', cap: 'Third-floor air & skyline' }
-    ]
+    title: 'Main Dining Hall',
+    cap: 'Warm golden lighting and intimate candlelit table settings',
+    src: '/gallary/interior.jpg',
+    layout: 'landscape'
   },
   {
-    id: 'food',
-    num: '02',
-    icon: '🍽️',
-    title: 'Food & Plates',
-    amh: 'ምግቦች',
-    tagline: 'Signature plates from the kitchen — kitfo, shiro, tibs and the dishes guests come back for.',
-    layout: 'showcase',
-    accent: '#C9A227',
-    items: [
-      { title: 'Kitfo Special', cap: 'Hand-chopped beef, spiced butter & mitmita' },
-      { title: 'Tegabino Shiro', cap: 'Sizzling clay-pot shiro' },
-      { title: 'Shekla Tibs', cap: 'Flame-seared beef, rosemary smoke' },
-      { title: 'Fasting Agalta', cap: 'The full vegetarian spread' },
-      { title: 'Special Dulet', cap: 'Minced tripe & liver, berbere kiss' },
-      { title: 'Chechebsa', cap: 'Pancake ribbons, kibbeh & honey' },
-      { title: 'Meat Lover Pizza', cap: 'House favourite from the oven' },
-      { title: 'Arenguade Salad', cap: 'Fresh, bright, composed' },
-      { title: 'Honey Cake', cap: 'A sweet finish' }
-    ]
+    title: 'Velvet Lounge Seating',
+    cap: 'Plush seating designed for relaxed conversations',
+    src: '/gallary/interior-2.jpg',
+    layout: 'square'
   },
   {
-    id: 'drinks',
-    num: '03',
-    icon: '🍹',
-    title: 'Coffee & Drinks',
-    amh: 'ቡና እና መጠጦች',
-    tagline: 'From the jebena to the bar — coffee, tej, fresh juices and cocktails poured with care.',
-    layout: 'showcase-tight',
-    accent: '#D98E32',
-    items: [
-      { title: 'Coffee Ceremony', cap: 'Roasted, ground and poured at your table' },
-      { title: 'Espresso & Macchiato', cap: 'House roast, strong and clean' },
-      { title: 'Classic Tej', cap: 'Golden honey wine' },
-      { title: 'Fresh Juices', cap: 'Mango, avocado & seasonal blends' },
-      { title: 'Signature Cocktails', cap: 'Mint, citrus and slow evenings' },
-      { title: 'Spiced Latte', cap: 'Cinnamon, cardamom & cream' },
-      { title: 'Mocktails', cap: 'Zero-proof, full flavor' },
-      { title: 'Soft Drinks & Water', cap: 'Cold and ready' }
-    ]
+    title: 'Modern Lounge Ambiance',
+    cap: 'Contemporary Ethiopian interior design and comfort',
+    src: '/gallary/interior-4.jpg',
+    layout: 'square'
+  },
+
+  // --- Next 2: Coffee ---
+  {
+    title: 'Traditional Buna Ceremony',
+    cap: 'Authentic Ethiopian coffee roasted and brewed with heritage craft',
+    src: '/gallary/coffee-section.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Artisan Coffee Roasting',
+    cap: 'Clay jebena brewing and traditional incense ritual',
+    src: '/gallary/coffee-section-2.jpg',
+    layout: 'square'
+  },
+
+  // --- Mix of Cuisine, Beverages, Cakes & Views ---
+  {
+    title: 'Signature Ethiopian Cuisine',
+    cap: 'Authentic traditional dishes prepared with premium spices',
+    src: '/gallary/foods.jpg',
+    layout: 'landscape'
+  },
+  {
+    title: 'Signature Beverages',
+    cap: 'Vibrant handcrafted juices and iced fruit infusions',
+    src: '/gallary/beverges.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Artisan Cake Collection',
+    cap: 'Gourmet multi-layered cakes freshly baked daily',
+    src: '/gallary/cakes.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Panoramic Avenue View',
+    cap: 'Floor-to-ceiling windows overlooking Kenenisa Avenue',
+    src: '/gallary/window-view.jpg',
+    layout: 'landscape'
+  },
+  {
+    title: 'Crafted Mocktails',
+    cap: 'Refreshing citrus, mint and herbal blends',
+    src: '/gallary/beverges-2.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Private Dining Corners',
+    cap: 'Quiet tables for romantic dinners and private meetings',
+    src: '/gallary/interior-3.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Pastry & Dessert Display',
+    cap: 'Delicate chocolate tortes and sweet slices',
+    src: '/gallary/cakes-2.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Mixology & Cold Drinks',
+    cap: 'Artisan iced beverages poured fresh from the bar',
+    src: '/gallary/beverges-3.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Daylight Terrace Outlook',
+    cap: 'Sunlit dining spaces with open city skyline views',
+    src: '/gallary/window-view-2.jpg',
+    layout: 'landscape'
+  },
+  {
+    title: 'Family & Group Tables',
+    cap: 'Comfortable spacious booths curated for celebrations',
+    src: '/gallary/interior-5.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Sweet Confections',
+    cap: 'Rich treats to conclude your dining experience',
+    src: '/gallary/cakes-3.jpg',
+    layout: 'square'
+  },
+  {
+    title: 'Bar & Night Ambiance',
+    cap: 'Warm ambient glow across the main bar counter',
+    src: '/gallary/interior-6.jpg',
+    layout: 'landscape'
   }
 ];
 
-/**
- * Flat list of image-bearing items, in display order (for the lightbox).
- */
 let galleryImages = [];
-let galleryImgIndex = 0;
 let currentGalleryIndex = 0;
 
-/** Minimal HTML escaper for rendered data */
+/** Minimal HTML escaper */
 const escHtml = (str) => String(str ?? '').replace(/[&<>"']/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /**
- * Renders a single tile.
+ * Renders a single compact mosaic card
  */
-function galleryItemHtml(item, section, imgIndex) {
-  const hasImg = imgIndex >= 0 && item.src;
-
-  if (hasImg) {
-    return `
-      <figure class="gal-item gal-img" onclick="openGalleryLightbox(${imgIndex})" role="button" tabindex="0"
-        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openGalleryLightbox(${imgIndex});}">
-        <img src="${escHtml(item.src)}" alt="${escHtml(item.title)}" loading="lazy" decoding="async">
-        <span class="gal-view">⤢</span>
-        <figcaption class="gal-cap">
-          <span class="gal-cap-title">${escHtml(item.title)}</span>
-          ${item.cap ? `<span class="gal-cap-sub">${escHtml(item.cap)}</span>` : ''}
-        </figcaption>
-      </figure>`;
-  }
-
+function renderGalleryCard(item, index) {
+  const layoutClass = item.layout ? `gal-card--${item.layout}` : 'gal-card--square';
+  
   return `
-    <div class="gal-item gal-ph" aria-label="${escHtml(item.title)} — photo coming soon">
-      <span class="gal-ph-icon">${section.icon}</span>
-      <div class="gal-ph-body">
-        <span class="gal-ph-title">${escHtml(item.title)}</span>
-        ${item.cap ? `<span class="gal-ph-cap">${escHtml(item.cap)}</span>` : ''}
-        <span class="gal-ph-note">Photo coming soon</span>
+    <article class="gal-card ${layoutClass}" onclick="openGalleryLightbox(${index})" role="button" tabindex="0"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openGalleryLightbox(${index});}"
+      aria-label="${escHtml(item.title)}">
+      <div class="gal-media">
+        <img src="${escHtml(item.src)}" alt="${escHtml(item.title)}" loading="lazy" decoding="async"
+          onerror="this.closest('.gal-card')?.classList.add('gal-card--fallback');">
+        <span class="gal-expand-icon" aria-hidden="true">⤢</span>
       </div>
-    </div>`;
+      <div class="gal-info">
+        <h3 class="gal-info-title">${escHtml(item.title)}</h3>
+        ${item.cap ? `<p class="gal-info-desc">${escHtml(item.cap)}</p>` : ''}
+      </div>
+    </article>
+  `;
 }
 
 /**
- * Renders one full chapter: header + grid.
- */
-function gallerySectionHtml(section) {
-  const itemsHtml = section.items.map(item => {
-    if (!item.src) return galleryItemHtml(item, section, -1);
-    const idx = galleryImgIndex++;
-    galleryImages.push({
-      src: item.src,
-      title: item.title,
-      cap: item.cap || '',
-      section: section.title
-    });
-    return galleryItemHtml(item, section, idx);
-  }).join('');
-
-  return `
-    <section class="gal-section" id="gal-${section.id}" data-target="${section.id}" style="--acc: ${section.accent}">
-      <header class="gal-section-head">
-        <span class="gal-num" aria-hidden="true">${section.num}</span>
-        <div class="gal-head-text">
-          <span class="gal-eyebrow">${section.icon} <span>${escHtml(section.amh)}</span></span>
-          <h2 class="gal-title">${escHtml(section.title)}</h2>
-          <p class="gal-tagline">${escHtml(section.tagline)}</p>
-        </div>
-      </header>
-      <div class="gal-grid gal-layout-${section.layout}">${itemsHtml}</div>
-    </section>`;
-}
-
-/**
- * Renders the sticky chapter quick-nav.
- */
-function renderGalleryNav() {
-  const nav = document.getElementById('galleryNav');
-  if (!nav) return;
-  nav.innerHTML = GALLERY_SECTIONS.map(s => `
-    <a class="gn-pill" href="#gal-${s.id}" data-target="${s.id}">
-      <span class="gn-num">${s.num}</span>${escHtml(s.title)}
-    </a>`).join('');
-}
-
-/**
- * Scrollspy — highlights the quick-nav pill for the section in view.
- */
-function initGalleryScrollspy() {
-  const pills = document.querySelectorAll('.gn-pill');
-  if (!pills.length || !('IntersectionObserver' in window)) return;
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const target = entry.target.dataset.target;
-        pills.forEach(p => p.classList.toggle('active', p.dataset.target === target));
-      }
-    });
-  }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
-
-  document.querySelectorAll('.gal-section').forEach(sec => observer.observe(sec));
-}
-
-/**
- * Initialize and render the gallery.
+ * Initialize and render the compact mosaic gallery
  */
 function initializeGallery() {
-  galleryImages = [];
-  galleryImgIndex = 0;
+  galleryImages = GALLERY_ITEMS;
   const grid = document.getElementById('galleryGrid');
   if (!grid) return;
 
-  grid.innerHTML = GALLERY_SECTIONS.map(gallerySectionHtml).join('');
-  renderGalleryNav();
-  initGalleryScrollspy();
+  grid.innerHTML = GALLERY_ITEMS.map((item, index) => renderGalleryCard(item, index)).join('');
 }
 
 /* ==========================================================================

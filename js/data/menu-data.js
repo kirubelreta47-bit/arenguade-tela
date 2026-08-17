@@ -27,86 +27,64 @@ var SAMPLE_IMG = {
  * description, ingredient lists, prices, heat levels, and pairings.
  */
 var menuData = {
-  "የፆም ምሳ": [
-    { n: "አይነት", en: "Assorted Fasting Dishes", d: "Traditional Platter, Mixed Veggies", ings: ["Traditional Platter", "Mixed Veggies"], p: 450, heat: 1, pair: "☕ Best with: Spiced Tea", img: SAMPLE_IMG.platter },
-    { n: "የፆም አገልግል", en: "Fasting Agalta Platter", d: "Misir, Atkilt, Dinich Wot, Nifro, Betkel Fit, Gomen, Shigna", ings: ["Misir", "Atkilt", "Dinich Wot", "Nifro", "Betkel Fit", "Gomen", "Shigna"], p: 620, heat: 2, pair: "🍻 Best with: Cold St. George Beer", img: SAMPLE_IMG.platter },
-    { n: "ሽሮ ፈሰስ", en: "Shiro Feses", d: "Slow-cooked Chickpea Sauce, Garlic, Fresh Injera", ings: ["Slow-cooked Chickpea Sauce", "Garlic", "Fresh Injera"], p: 350, heat: 2, pair: "🍷 Best with: Tej", img: SAMPLE_IMG.stew },
-    { n: "ተጋቢኖ", en: "Tegabino Shiro", d: "Sizzling Clay Pot Shiro, Jalapeño, Spiced Butter (Fasting)", ings: ["Sizzling Clay Pot Shiro", "Jalapeño", "Spiced Butter (Fasting)"], p: 400, heat: 3, pair: "🍹 Best with: Fresh Juice", img: SAMPLE_IMG.stew }
+  "Breakfast / ቁርስ": [
+    { n: "Dulet (ዱለት)", en: "Dulet", d: "Traditional spiced minced beef and organ meat sauté", p: 550, img: SAMPLE_IMG.meat, heat: 2, pair: "☕ Best with: Spiced Tea" },
+    { n: "Special Dulet (እስፔሻል ዱለት)", en: "Special Dulet", d: "ዱለት ፣ አይብ ፣ ቆጮ", ings: ["ዱለት", "አይብ", "ቆጮ"], p: 680, img: SAMPLE_IMG.meat, heat: 2, pair: "☕ Best with: Ethiopian Coffee" },
+    { n: "Chechebsa (ጨጨብሳ)", en: "Chechebsa", d: "በእትክት ቅቤ የታሸ ቂጣ ፣ ማር", ings: ["በእትክት ቅቤ የታሸ ቂጣ", "ማር"], p: 250, img: SAMPLE_IMG.breakfast, pair: "☕ Best with: Spiced Tea" },
+    { n: "Special Chechebsa (እስፔሻል ጨጨብሳ)", en: "Special Chechebsa", d: "በቂቤ የታሸ ቂጣ ፣ እንቁላል ፣ እርጎ", ings: ["በቂቤ የታሸ ቂጣ", "እንቁላል", "እርጎ"], p: 350, img: SAMPLE_IMG.breakfast, pair: "☕ Best with: Buna / Spiced Tea" },
+    { n: "Ful (ፉል)", en: "Ful Medames", d: "ባቄላ ክክ / ድፍን ባቄላ ፣ ቲማቲም ሰላጣ ፣ ቃሪያ ፣ ሽንኩርት", ings: ["ባቄላ ክክ / ድፍን ባቄላ", "ቲማቲም ሰላጣ", "ቃሪያ", "ሽንኩርት"], p: 250, img: SAMPLE_IMG.breakfast },
+    { n: "Special Ful (ፉል እስፔሻል)", en: "Special Ful", d: "ባቄላ ክክ / ድፍን ባቄላ ፣ ቲማቲም ሰላጣ ፣ እርጎ ፣ እንቁላል ፣ ቱና/ስጋ ፣ ቃሪያ ፣ ሽንኩርት", ings: ["ባቄላ ክክ / ድፍን ባቄላ", "ቲማቲም ሰላጣ", "እርጎ", "እንቁላል", "ቱና / ስጋ", "ቃሪያ", "ሽንኩርት"], p: 350, img: SAMPLE_IMG.breakfast },
+    { n: "Fetira (ፈጢራ)", en: "Fetira", d: "Flaky layered pastry", ings: ["Flaky Layered Pastry", "Honey"], p: 250, img: SAMPLE_IMG.breakfast },
+    { n: "Special Fetira (ፈጢራ እስፔሻል)", en: "Special Fetira", d: "እንቁላል ፣ እርጎ ፣ ቂጣ", ings: ["እንቁላል", "እርጎ", "ቂጣ"], p: 320, img: SAMPLE_IMG.breakfast },
+    { n: "Ferfer (ፍርፍር)", en: "Firfir", d: "Spiced shredded injera in savory sauce", ings: ["Shredded Injera", "Berbere Sauce", "Spices"], p: 350, img: SAMPLE_IMG.stew, heat: 2 }
   ],
-  "የፍስክ ምሳ": [
-    { n: "የፍስክ አገልግል", d: "Assorted meat dishes: Kitfo · Tibs · Firfir · Gomen · Shigna", p: 780, img: SAMPLE_IMG.meat },
-    { n: "ባናቱ", d: "Siga Firfir · Enkulal · Doro", p: 620, img: SAMPLE_IMG.meat },
-    { n: "ምንቸት በቀይ", d: "Minced meat in red spiced sauce", p: 350 },
-    { n: "ምንቸት በአልጫ", d: "Minced meat in mild alicha sauce", p: 350 },
-    { n: "ቅቅል", d: "Traditional kikil bone broth stew", p: 480, img: SAMPLE_IMG.stew },
-    { n: "ጥብስ", d: "Beef tibs", p: 750, img: SAMPLE_IMG.meat },
-    { n: "ሸክላ ጥብስ", d: "Special shekla tibs", p: 780, img: SAMPLE_IMG.meat },
-    { n: "ስጋ ፍርፍር", d: "Beef firfir", p: 500 },
-    { n: "ቋንጣ ፍርፍር", d: "Home-style dried meat firfir with ayib & kibbeh", p: 480 },
-    { n: "የፍስክ ኮምቦ", d: "Meat combo platter: Kitfo · Tibs · Firfir & more", p: 750, img: SAMPLE_IMG.platter }
+  "Sandwiches / ሳንድዊች": [
+    { n: "Egg Sandwich", en: "Egg Sandwich", d: "Egg, lettuce, tomato, onion, french fries", ings: ["Egg", "Lettuce", "Tomato", "Onion", "French Fries"], p: 350, img: SAMPLE_IMG.sandwich },
+    { n: "Vegetable Sandwich", en: "Vegetable Sandwich", d: "Grilled veg, lettuce, french fries", ings: ["Grilled Veggies", "Lettuce", "French Fries"], p: 350, img: SAMPLE_IMG.sandwich },
+    { n: "Tuna Sandwich", en: "Tuna Sandwich", d: "Tuna, onion, tomato, cheese, lettuce, french fries", ings: ["Tuna", "Onion", "Tomato", "Cheese", "Lettuce", "French Fries"], p: 480, img: SAMPLE_IMG.sandwich },
+    { n: "Club Sandwich", en: "Club Sandwich", d: "Minced beef, boiled egg, chopped tomato, chilli, lettuce, mayonnaise sauce, french fries", ings: ["Minced Beef", "Boiled Egg", "Chopped Tomato", "Chilli", "Lettuce", "Mayonnaise", "French Fries"], p: 620, img: SAMPLE_IMG.sandwich, pair: "🍹 Best with: Fresh Juice" },
+    { n: "Steak Sandwich", en: "Steak Sandwich", d: "Grilled beef, onion, tomato, mozzarella, cheese, french fries", ings: ["Grilled Beef", "Onion", "Tomato", "Mozzarella", "Cheese", "French Fries"], p: 750, img: SAMPLE_IMG.sandwich, pair: "🍻 Best with: Cold Beer" },
+    { n: "Chicken Sandwich", en: "Chicken Sandwich", d: "Tender chicken, grilled tomato, onion, green chilli, lettuce, french fries", ings: ["Tender Chicken", "Grilled Tomato", "Onion", "Green Chilli", "Lettuce", "French Fries"], p: 780, img: SAMPLE_IMG.sandwich, heat: 1 }
   ],
-  "ቁርስ": [
-    { n: "ጨጨብሳ", d: "Chechebsa with kibbeh, spices & honey", p: 250, img: SAMPLE_IMG.breakfast },
-    { n: "ስፔሻል ጨጨብሳ", d: "Special chechebsa with ayib · egg", p: 350, img: SAMPLE_IMG.breakfast },
-    { n: "ፉል", d: "Ful medames with egg · tomato · onion · chilli", p: 250, img: SAMPLE_IMG.breakfast },
-    { n: "ፉል ስፔሻል", d: "Special ful with egg · tomato · ayib", p: 350 },
-    { n: "ፈጢራ", d: "Fetira (Ethiopian layered pastry)", p: 250 },
-    { n: "ፈጢራ ስፔሻል", d: "Special fetira with egg · honey · kibbeh", p: 350 },
-    { n: "ፍርፍር", d: "Firfir (bread pieces in spiced sauce)", p: 280 },
-    { n: "ሀፍ ሀፍ", d: "Half & half combination", p: 500 },
-    { n: "ዱለት", d: "Dulet (minced tripe & liver)", p: 550, img: SAMPLE_IMG.meat },
-    { n: "ስፔሻል ዱለት", d: "Special dulet with egg · ayib · kibbeh", p: 680 },
-    { n: "እንቁላል ፍርፍር", d: "Scrambled egg firfir", p: 320, img: SAMPLE_IMG.breakfast },
-    { n: "እንቁላል በስልስ", d: "Egg with silsi sauce", p: 350 },
-    { n: "እንቁላል በስጋ", d: "Egg with beef", p: 420 },
-    { n: "ቁርስ ኮምቦ", d: "Breakfast combo: egg · chechebsa · firfir", p: 420 }
+  "Fasting Lunch / የጾም ምሳ": [
+    { n: "Fasting Agelgil (የጾም አገልግል)", en: "Fasting Agelgil Platter", d: "ምስር ፣ ክክ ፣ ድፍን ምስር ፣ ሰላጣ ፣ ሩዝ በአትክልት ፣ ጎመን ፣ ሽሮ", ings: ["ምስር", "ክክ", "ድፍን ምስር", "ሰላጣ", "ሩዝ በአትክልት", "ጎመን", "ሽሮ"], p: 620, heat: 2, pair: "🍻 Best with: Cold St. George Beer", img: SAMPLE_IMG.platter },
+    { n: "Fasting Combo (የጾም ኮምቦ)", en: "Fasting Combo Platter", d: "Assorted fasting platter", ings: ["Traditional Platter", "Mixed Veggies", "Shiro", "Injera"], p: 670, heat: 1, pair: "☕ Best with: Spiced Tea", img: SAMPLE_IMG.platter },
+    { n: "Gomen Kitfo (ጎመን ክትፎ)", en: "Gomen Kitfo", d: "Finely chopped seasoned collard greens", ings: ["Collard Greens", "Ethiopian Spices", "Ayib (Optional)"], p: 550, heat: 1, pair: "🍷 Best with: Tej", img: SAMPLE_IMG.platter }
   ],
-  "Pizza": [
-    { n: "Vegetable Pizza", d: "Mushroom · cooked veg · oregano", p: 450, img: SAMPLE_IMG.pizza },
-    { n: "Tuna Fasting Pizza", d: "Tuna · garlic · oregano", p: 650 },
-    { n: "Margherita Pizza", d: "Mozzarella cheese · oregano · hot tomato sauce", p: 700, img: SAMPLE_IMG.pizza },
-    { n: "Chalazion Pizza", d: "Minced beef · mozzarella · mushroom · oregano", p: 780 },
-    { n: "Tuna with Cheese Pizza", d: "Tuna · shredded mozzarella cheese", p: 800 },
-    { n: "Meat Lover Pizza", d: "Mozzarella · minced beef · black olive · oregano", p: 800, img: SAMPLE_IMG.pizza },
-    { n: "The Super Pizza", d: "Mozzarella · chicken · minced beef · mushroom · black olives · tuna", p: 950, img: SAMPLE_IMG.pizza }
+  "Non-Fasting Lunch / የፍስክ ምሳ": [
+    { n: "Fesik Agelgil (የፍስክ አገልግል)", en: "Fesik Agelgil Platter", d: "ምንቸት በቀይ/በአልጫ ፣ አይብ ፣ ጎመንክትፎ ፣ መረቅ ፍርፍር", ings: ["ምንቸት በቀይ / በአልጫ", "አይብ", "ጎመን ክትፎ", "መረቅ ፍርፍር"], p: 780, heat: 2, pair: "🍷 Best with: Tej", img: SAMPLE_IMG.meat },
+    { n: "Chikna Tibs (ጭቅና ጥብስ)", en: "Chikna Tibs", d: "Tender sautéed prime beef fillet", ings: ["Prime Beef Fillet", "Rosemary", "Onion", "Jalapeño", "Awaze"], p: 780, heat: 2, pair: "🍷 Best with: Tej or Red Wine", img: SAMPLE_IMG.meat },
+    { n: "Banatu (ባናቱ)", en: "Banatu", d: "ስጋ ፍርፍር ፣ እንቁላል ፣ ዱለት", ings: ["ስጋ ፍርፍር", "እንቁላል", "ዱለት"], p: 620, heat: 2, pair: "🍻 Best with: Cold Beer", img: SAMPLE_IMG.meat },
+    { n: "Fesik Combo (የፍስክ ኮምቦ)", en: "Fesik Combo", d: "ምንቸት አብስ ፣ ጥብስ ፣ ስጋፍርፍር ሩዝ በስጋ", ings: ["ምንቸት አብስ", "ጥብስ", "ስጋ ፍርፍር", "ሩዝ በስጋ"], p: 750, heat: 2, pair: "🍷 Best with: House Tej", img: SAMPLE_IMG.platter }
   ],
-  "Burger": [
-    { n: "Beef Burger", d: "BBQ sauce · tomato · onion · mayonnaise · lettuce · french fries", p: 550, img: SAMPLE_IMG.burger },
-    { n: "Cheese Burger", d: "Provolone cheese · tomato · onion · mayonnaise · lettuce · french fries", p: 620, img: SAMPLE_IMG.burger },
-    { n: "Special Burger", d: "Provolone cheese · beef · mortadella · tomato · onion · mayonnaise · lettuce · french fries", p: 730, img: SAMPLE_IMG.burger },
-    { n: "French Fries", d: "Batter fried potatoes · ketchup", p: 250, img: SAMPLE_IMG.fries }
+  "Salads / ሰላጣ": [
+    { n: "Arenguade Tila Special Salad", en: "Special House Salad", d: "Tomato, cucumber, freeze salad, china salad, onion, green chilli, papaya, avocado, mango, parsley dressing", ings: ["Tomato", "Cucumber", "Freeze Salad", "China Salad", "Onion", "Green Chilli", "Papaya", "Avocado", "Mango", "Parsley Dressing"], p: 520, img: SAMPLE_IMG.salad, pair: "🍹 Best with: Fresh Smoothie" },
+    { n: "Italian Salad", en: "Italian Salad", d: "Tomato, cucumber, freeze salad, china salad, onion, green chilli, parsley dressing, mozzarella cheese, olives", ings: ["Tomato", "Cucumber", "Freeze Salad", "China Salad", "Onion", "Green Chilli", "Parsley Dressing", "Mozzarella Cheese", "Olives"], p: 580, img: SAMPLE_IMG.salad },
+    { n: "Tuna Salad", en: "Tuna Salad", d: "Tuna, tomato, cucumber, freeze salad, china salad, green onion, chilli, parsley dressing", ings: ["Tuna", "Tomato", "Cucumber", "Freeze Salad", "China Salad", "Green Onion", "Chilli", "Parsley Dressing"], p: 680, img: SAMPLE_IMG.salad },
+    { n: "Chicken Caesar Salad", en: "Chicken Caesar Salad", d: "Grilled chicken, china salad, freeze salad, carrot, green onion, mayonnaise dressing", ings: ["Grilled Chicken", "China Salad", "Freeze Salad", "Carrot", "Green Onion", "Mayonnaise Dressing"], p: 880, img: SAMPLE_IMG.salad }
   ],
-  "Sandwich": [
-    { n: "Egg Sandwich", d: "Egg · lettuce · tomato · onion · french fries", p: 300, img: SAMPLE_IMG.sandwich },
-    { n: "Vegetable Sandwich", d: "Grilled veg · lettuce", p: 350 },
-    { n: "Tuna Sandwich", d: "Tuna · onion · tomato · cheese · lettuce · french fries", p: 480, img: SAMPLE_IMG.sandwich },
-    { n: "Club Sandwich", d: "Minced beef · boiled egg · chopped tomato · chilli · lettuce · mayonnaise · french fries", p: 620, img: SAMPLE_IMG.sandwich },
-    { n: "Steak Sandwich", d: "Grilled beef · onion · tomato · mozzarella cheese · french fries", p: 750 },
-    { n: "Chicken Sandwich", d: "Tender chicken · grilled tomato · onion · green chilli · lettuce · french fries", p: 780 }
+  "Wraps / ራፕ": [
+    { n: "Vegetable Wrap", en: "Vegetable Wrap", d: "Cooked vegetable, mushroom, avocado, fries", ings: ["Cooked Vegetables", "Mushroom", "Avocado", "French Fries"], p: 420, img: SAMPLE_IMG.wrap },
+    { n: "Avocado Wrap", en: "Avocado Wrap", d: "Avocado, black pepper, french fries", ings: ["Fresh Avocado", "Black Pepper", "French Fries", "Tortilla"], p: 480, img: SAMPLE_IMG.wrap },
+    { n: "Beef Wrap", en: "Beef Wrap", d: "Grilled beef, onion, tomato, mozzarella cheese, french fries", ings: ["Grilled Beef", "Onion", "Tomato", "Mozzarella Cheese", "French Fries"], p: 880, img: SAMPLE_IMG.wrap, pair: "🍹 Best with: Lemonade" },
+    { n: "Tuna Wrap", en: "Tuna Wrap", d: "Tuna wrap, grilled tomato, onion, lettuce, french fries, avocado, green chilli", ings: ["Tuna", "Grilled Tomato", "Onion", "Lettuce", "French Fries", "Avocado", "Green Chilli"], p: 570, img: SAMPLE_IMG.wrap, heat: 1 },
+    { n: "Chicken Wrap", en: "Chicken Wrap", d: "Tender chicken, grilled tomato, onion, lettuce, french fries, green chilli", ings: ["Tender Chicken", "Grilled Tomato", "Onion", "Lettuce", "French Fries", "Green Chilli"], p: 880, img: SAMPLE_IMG.wrap, heat: 1 }
   ],
-  "Wrap": [
-    { n: "Vegetable Wrap", d: "Cooked vegetable · mushroom · avocado · fries", p: 420, img: SAMPLE_IMG.wrap },
-    { n: "Avocado Wrap", d: "Avocado · black pepper · french fries", p: 480, img: SAMPLE_IMG.wrap },
-    { n: "Tuna Wrap", d: "Tuna · grilled tomato · onion · lettuce · fries · avocado · green chilli", p: 570 },
-    { n: "Beef Wrap", d: "Grilled beef · onion · tomato · mozzarella cheese · french fries", p: 750, img: SAMPLE_IMG.wrap },
-    { n: "Chicken Wrap", d: "Tender chicken · grilled tomato · onion · lettuce · fries · green chilli", p: 850 }
+  "Burgers & Sides / በርገር": [
+    { n: "Beef Burger", en: "Classic Beef Burger", d: "BBQ sauce, tomato, onion, mayonnaise, lettuce, french fries", ings: ["Beef Patty", "BBQ Sauce", "Tomato", "Onion", "Mayonnaise", "Lettuce", "French Fries"], p: 550, img: SAMPLE_IMG.burger },
+    { n: "Double Cheese Burger", en: "Double Cheese Burger", d: "Provolone cheese, tomato, onion, mayonnaise, lettuce, french fries", ings: ["Double Beef Patty", "Provolone Cheese", "Tomato", "Onion", "Mayonnaise", "Lettuce", "French Fries"], p: 620, img: SAMPLE_IMG.burger },
+    { n: "Special Burger", en: "Special House Burger", d: "Provolone cheese, beef mortadella, tomato, onion, mayonnaise, lettuce, french fries", ings: ["Beef Patty", "Provolone Cheese", "Beef Mortadella", "Tomato", "Onion", "Mayonnaise", "Lettuce", "French Fries"], p: 900, img: SAMPLE_IMG.burger, pair: "🥤 Best with: Soft Drink" },
+    { n: "French Fries (የድንች ጥብስ)", en: "Crispy French Fries", d: "Batter fried potatoes, ketchup", ings: ["Fresh Cut Potatoes", "Special Seasoning", "Ketchup"], p: 250, img: SAMPLE_IMG.fries }
   ],
-  "Spaghetti": [
-    { n: "Spaghetti with Tomato Sauce", d: "Classic spaghetti in tomato sauce", p: 420, img: SAMPLE_IMG.pasta },
-    { n: "Spaghetti with Veg", d: "Spaghetti with mixed vegetables", p: 450 },
-    { n: "Carbonara", d: "Creamy carbonara spaghetti", p: 580, img: SAMPLE_IMG.pasta },
-    { n: "Lasagna", d: "Baked layered lasagna", p: 720, img: SAMPLE_IMG.pasta }
-  ],
-  "Salad": [
-    { n: "Arenguade Tila Special Salad", d: "Tomato · kiar · freeze salad · chaina salad · onion · green chilli · papaya · avocado · mango · parsley dressing", p: 470, img: SAMPLE_IMG.salad },
-    { n: "Italian Salad", d: "Tomato · kiar · freeze salad · chaina salad · onion · green chilli · parsley dressing · mozzarella · olives", p: 580, img: SAMPLE_IMG.salad },
-    { n: "Tuna Salad", d: "Tuna · tomato · kiyar · freeze salad · chaina salad · onion · green chilli · parsley dressing", p: 680 },
-    { n: "Chicken Caesar Salad", d: "Grilled chicken · chaina salad · freeze salad · carrot · onion · mayonnaise dressing", p: 850, img: SAMPLE_IMG.salad }
-  ],
-  "ክትፎ": [
-    { n: "ጥሬ ክትፎ", d: "Lean raw kitfo — mildly seasoned minced beef", p: 500, img: SAMPLE_IMG.kitfo },
-    { n: "ክትፎ ኖርማል", d: "Standard kitfo portion with all accompaniments", p: 1200, img: SAMPLE_IMG.kitfo },
-    { n: "ክትፎ ስፔሻል", d: "Premium special kitfo — full portion, all accompaniments", p: 1700, img: SAMPLE_IMG.kitfo }
+  "Pizza / ፒዛ": [
+    { n: "Vegetable Pizza", en: "Vegetable Pizza", d: "Mushroom, cooked veg, oregano", ings: ["Mushroom", "Cooked Veggies", "Oregano", "Tomato Sauce"], p: 450, img: SAMPLE_IMG.pizza },
+    { n: "Tuna Fasting Pizza", en: "Tuna Fasting Pizza", d: "Tuna, garlic, oregano", ings: ["Tuna", "Garlic", "Oregano", "Fasting Crust"], p: 650, img: SAMPLE_IMG.pizza },
+    { n: "Margherita Pizza", en: "Margherita Pizza", d: "Mozzarella cheese, oregano, hot tomato sauce", ings: ["Mozzarella Cheese", "Oregano", "Hot Tomato Sauce", "Fresh Basil"], p: 700, img: SAMPLE_IMG.pizza },
+    { n: "Chalazion Pizza", en: "Chalazion Pizza", d: "Minced beef, mozzarella, mushroom, oregano", ings: ["Minced Beef", "Mozzarella", "Mushroom", "Oregano"], p: 780, img: SAMPLE_IMG.pizza },
+    { n: "Tuna With Cheese Pizza", en: "Tuna With Cheese Pizza", d: "Tuna, mozzarella cheese, oregano", ings: ["Tuna", "Mozzarella Cheese", "Oregano", "Tomato Sauce"], p: 800, img: SAMPLE_IMG.pizza },
+    { n: "Meat Lover Pizza", en: "Meat Lover Pizza", d: "Mozzarella cheese, minced beef, black olive, oregano", ings: ["Mozzarella Cheese", "Minced Beef", "Black Olive", "Oregano"], p: 800, img: SAMPLE_IMG.pizza, pair: "🍷 Best with: Red Wine" },
+    { n: "The Super Pizza", en: "The Super Pizza", d: "Mozzarella cheese, chicken, minced beef, mushroom, black olives, tuna", ings: ["Mozzarella Cheese", "Chicken", "Minced Beef", "Mushroom", "Black Olives", "Tuna"], p: 950, img: SAMPLE_IMG.pizza, pair: "🍻 Best with: Cold Beer" },
+    { n: "Chicken Super Pizza", en: "Chicken Super Pizza", d: "Tender chicken, mozzarella cheese, oregano, tomato sauce", ings: ["Tender Chicken", "Mozzarella Cheese", "Oregano", "Tomato Sauce"], p: 1300, img: SAMPLE_IMG.pizza }
   ]
 };
 
@@ -116,6 +94,7 @@ var menuData = {
 var eventsList = [
   { i: '🎲', t: 'Game Night', s: 'Every Thursday', d: 'Chess, Uno, Jenga & board games — winners earn restaurant rewards.' },
   { i: '❤️', t: 'Couples Night', s: 'Every Friday', d: 'Candlelight dinner with a special menu and romantic ambiance. Reservation recommended.' },
+  { i: '🍹', t: 'Beverage & Happy Hour Specials', s: 'Daily · 3:00 PM – 7:00 PM', d: 'Enjoy 20% off all handcrafted specialty coffees, fresh fruit smoothies, signature cocktails, and herbal teas. Relax and unwind.' },
   { i: '🎤', t: 'Open Mic', s: '1st & 3rd Saturday', d: 'Music, poetry, comedy & storytelling — celebrating local voices.' },
   { i: '🎵', t: 'Live Music', s: 'Every Sunday', d: 'Unwind to live performances from the best local musicians in the city.' },
   { i: '🎧', t: 'DJ Night', s: 'Every Friday & Saturday', d: 'Resident DJs spinning Afrobeats, R&B & global hits. The floors come alive after dark.' },

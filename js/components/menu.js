@@ -2,7 +2,7 @@
    ARENGUADE TILA - MENU RENDERER & TAB CONTROLLER
    ========================================================================== */
 
-let activeFeaturedTab = "የፆም ምሳ";
+let activeFeaturedTab = "Breakfast / ቁርስ";
 let fullMenuActiveTab = "ሁሉንም / All Items";
 
 /**
@@ -81,13 +81,13 @@ function renderFeaturedMenu() {
 
   // Curate 6 top signature items across categories for a balanced 2-row x 3-column layout
   const featuredItems = [
-    { item: menuData["የፆም ምሳ"][1], cat: "የፆም ምሳ" },
-    { item: menuData["የፆም ምሳ"][3], cat: "የፆም ምሳ" },
-    { item: menuData["የፍስክ ምሳ"][0], cat: "የፍስክ ምሳ" },
-    { item: (menuData["ክትፎ"] && menuData["ክትፎ"][2]) || menuData["የፍስክ ምሳ"][1], cat: "ክትፎ" },
-    { item: (menuData["Pizza"] && menuData["Pizza"][5]) || menuData["Pizza"][0], cat: "Pizza" },
-    { item: (menuData["Salad"] && menuData["Salad"][0]), cat: "Salad" }
-  ].filter(entry => entry.item);
+    { item: menuData["Fasting Lunch / የጾም ምሳ"]?.[0], cat: "Fasting Lunch / የጾም ምሳ" },
+    { item: menuData["Non-Fasting Lunch / የፍስክ ምሳ"]?.[1], cat: "Non-Fasting Lunch / የፍስክ ምሳ" },
+    { item: menuData["Breakfast / ቁርስ"]?.[1], cat: "Breakfast / ቁርስ" },
+    { item: menuData["Pizza / ፒዛ"]?.[5], cat: "Pizza / ፒዛ" },
+    { item: menuData["Sandwiches / ሳንድዊች"]?.[3], cat: "Sandwiches / ሳንድዊች" },
+    { item: menuData["Salads / ሰላጣ"]?.[0], cat: "Salads / ሰላጣ" }
+  ].filter(entry => entry && entry.item);
 
   gridCont.innerHTML = featuredItems.map((entry, i) => renderLuxuryCardHtml(entry.item, i, entry.cat)).join('');
 }
@@ -120,16 +120,20 @@ function renderFullMenu() {
   categoriesToRender.forEach(cat => {
     let items = menuData[cat] || [];
     
-    // Apply filters
+    // Apply fasting filter
     if (fastingOnly) {
-      if (!cat.includes("ፆም") && !cat.includes("መጠጥ")) {
-         items = items.filter(itm => itm.n.toLowerCase().includes("fasting") || itm.n.includes("ፆም"));
+      if (!cat.includes("ጾም") && !cat.includes("ፆም") && !cat.includes("መጠጥ")) {
+         items = items.filter(itm => 
+           (itm.n && (itm.n.toLowerCase().includes("fasting") || itm.n.includes("ጾም") || itm.n.includes("ፆም"))) ||
+           (itm.d && (itm.d.toLowerCase().includes("fasting") || itm.d.includes("ጾም") || itm.d.includes("ፆም")))
+         );
       }
     }
     
+    // Apply search filter
     if (searchQuery) {
       items = items.filter(itm => 
-        itm.n.toLowerCase().includes(searchQuery) || 
+        (itm.n && itm.n.toLowerCase().includes(searchQuery)) || 
         (itm.en && itm.en.toLowerCase().includes(searchQuery)) || 
         (itm.d && itm.d.toLowerCase().includes(searchQuery))
       );
@@ -138,7 +142,7 @@ function renderFullMenu() {
     if (items.length > 0) {
       foundAny = true;
       renderHtml += `
-        <div class="menu-category-block" id="cat-${cat.replace(/\s+/g, '-')}">
+        <div class="menu-category-block" id="cat-${cat.replace(/[\s\/\(\)]+/g, '-')}">
           <h3 class="menu-category-title">${cat}</h3>
           <div class="menu-cards-grid">
             ${items.map((itm, i) => renderLuxuryCardHtml(itm, i, cat)).join('')}
