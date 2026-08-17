@@ -38,14 +38,20 @@ function navigateTo(viewId) {
   const mainPage = document.getElementById('main-scroll-page');
   const fullMenuPage = document.getElementById('full-menu-page');
   const fullGalleryPage = document.getElementById('full-gallery-page');
+  const siteFooter = document.querySelector('footer');
 
   if (!mainPage || !fullMenuPage || !fullGalleryPage) return;
+
+  const setFooterVisible = (visible) => {
+    if (siteFooter) siteFooter.style.display = visible ? '' : 'none';
+  };
 
   // Handle overlay views (Rewards, Reservations)
   if (OVERLAY_VIEWS.includes(viewId)) {
     mainPage.style.display = 'block';
     fullMenuPage.style.display = 'none';
     fullGalleryPage.style.display = 'none';
+    setFooterVisible(true);
     closeOverlays();
     
     const overlay = document.getElementById(viewId);
@@ -64,16 +70,19 @@ function navigateTo(viewId) {
     mainPage.style.display = 'none';
     fullMenuPage.style.display = 'block';
     fullGalleryPage.style.display = 'none';
+    setFooterVisible(false);
     window.scrollTo(0, 0);
   } else if (viewId === 'view-gallery') {
     mainPage.style.display = 'none';
     fullMenuPage.style.display = 'none';
     fullGalleryPage.style.display = 'block';
+    setFooterVisible(false);
     window.scrollTo(0, 0);
   } else {
     mainPage.style.display = 'block';
     fullMenuPage.style.display = 'none';
     fullGalleryPage.style.display = 'none';
+    setFooterVisible(true);
 
     const el = document.getElementById(viewId);
     if (el) {

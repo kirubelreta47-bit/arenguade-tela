@@ -1,213 +1,207 @@
 /* ==========================================================================
    ARENGUADE TILA - GALLERY COMPONENT
+   Showcase grids for restaurant interior + food (ready for real photos).
+   --------------------------------------------------------------------------
+   HOW TO ADD PHOTOS:
+   Add a `src` field to any item:
+     { title: 'Kitfo Special', cap: 'Hand-chopped beef', src: '/images/kitfo.jpg' }
+   Items WITHOUT a src render as designed placeholders.
    ========================================================================== */
 
-/**
- * Gallery data with images and descriptions
- */
-const galleryData = [
+const GALLERY_SECTIONS = [
   {
-    src: 'https://images.unsplash.com/photo-1584622614875-e62df8ac371f?w=600&h=600&fit=crop&q=80',
-    title: 'Elegant Dining Space',
-    category: 'Interior'
+    id: 'interior',
+    num: '01',
+    icon: '🛋️',
+    title: 'Interior & Ambiance',
+    amh: 'የውስጥ ማስጌጫ',
+    tagline: 'Deep blues, warm gold and candlelight — rooms built for long evenings and quiet conversations.',
+    layout: 'showcase',
+    accent: '#7C93B8',
+    items: [
+      { title: 'The Main Dining Hall', cap: 'Where evenings begin' },
+      { title: 'Golden Hour Seating', cap: 'Light through the windows' },
+      { title: 'Private Corner', cap: 'Quiet tables for two' },
+      { title: 'Candlelit Tables', cap: 'The after-dark glow' },
+      { title: 'The Lounge', cap: 'Low seats, slow drinks' },
+      { title: 'Window Views', cap: 'Kenenisa Avenue below' },
+      { title: 'Bar & Counter', cap: 'Where the night opens' },
+      { title: 'Terrace Glow', cap: 'Third-floor air & skyline' }
+    ]
   },
   {
-    src: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&fit=crop&q=80',
-    title: 'Gourmet Plating',
-    category: 'Food'
+    id: 'food',
+    num: '02',
+    icon: '🍽️',
+    title: 'Food & Plates',
+    amh: 'ምግቦች',
+    tagline: 'Signature plates from the kitchen — kitfo, shiro, tibs and the dishes guests come back for.',
+    layout: 'showcase',
+    accent: '#C9A227',
+    items: [
+      { title: 'Kitfo Special', cap: 'Hand-chopped beef, spiced butter & mitmita' },
+      { title: 'Tegabino Shiro', cap: 'Sizzling clay-pot shiro' },
+      { title: 'Shekla Tibs', cap: 'Flame-seared beef, rosemary smoke' },
+      { title: 'Fasting Agalta', cap: 'The full vegetarian spread' },
+      { title: 'Special Dulet', cap: 'Minced tripe & liver, berbere kiss' },
+      { title: 'Chechebsa', cap: 'Pancake ribbons, kibbeh & honey' },
+      { title: 'Meat Lover Pizza', cap: 'House favourite from the oven' },
+      { title: 'Arenguade Salad', cap: 'Fresh, bright, composed' },
+      { title: 'Honey Cake', cap: 'A sweet finish' }
+    ]
   },
   {
-    src: 'https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=600&h=600&fit=crop&q=80',
-    title: 'Coffee Culture',
-    category: 'Beverages'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1504674900968-f873feac2859?w=600&h=600&fit=crop&q=80',
-    title: 'Fine Dining Experience',
-    category: 'Moments'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=600&fit=crop&q=80',
-    title: 'Restaurant Interior',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=600&fit=crop&q=80',
-    title: 'Sophisticated Bar',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&fit=crop&q=80',
-    title: 'Artisan Cuisine',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop&q=80',
-    title: 'Premium Ingredients',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1537621793619-4f624139054d?w=600&h=600&fit=crop&q=80',
-    title: 'Delicate Plating',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1495640388908-05a76f1ea362?w=600&h=600&fit=crop&q=80',
-    title: 'Wine Selection',
-    category: 'Beverages'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&h=600&fit=crop&q=80',
-    title: 'Table Setting',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1495474472645-4c71bcdd2014?w=600&h=600&fit=crop&q=80',
-    title: 'Culinary Art',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1414235077418-8a1af50b9338?w=600&h=600&fit=crop&q=80',
-    title: 'Evening Ambiance',
-    category: 'Moments'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1513985248281-a7b0f8a8e8c1?w=600&h=600&fit=crop&q=80',
-    title: 'Chef\'s Presentation',
-    category: 'Behind the Scenes'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1537909352847-f1cea42e09cb?w=600&h=600&fit=crop&q=80',
-    title: 'Community Dining',
-    category: 'Moments'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1460873646552-4d580d50b0e9?w=600&h=600&fit=crop&q=80',
-    title: 'Signature Dish',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1504674900968-f873feac2859?w=600&h=600&fit=crop&q=80',
-    title: 'Ambient Lighting',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1555939594-58d7cb561e1f?w=600&h=600&fit=crop&q=80',
-    title: 'Fresh Vegetables',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1504674900968-f873feac2859?w=600&h=600&fit=crop&q=80',
-    title: 'Plated Masterpiece',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=600&fit=crop&q=80',
-    title: 'Lounge Area',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=600&fit=crop&q=80',
-    title: 'Restaurant Ambiance',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&fit=crop&q=80',
-    title: 'Gourmet Meal',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=600&h=600&fit=crop&q=80',
-    title: 'Espresso Service',
-    category: 'Beverages'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1495640388908-05a76f1ea362?w=600&h=600&fit=crop&q=80',
-    title: 'Cocktail Bar',
-    category: 'Beverages'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop&q=80',
-    title: 'Spice Market',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1537621793619-4f624139054d?w=600&h=600&fit=crop&q=80',
-    title: 'Chef Selection',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&h=600&fit=crop&q=80',
-    title: 'Place Setting',
-    category: 'Interior'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1495474472645-4c71bcdd2014?w=600&h=600&fit=crop&q=80',
-    title: 'Plate Artistry',
-    category: 'Food'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1414235077418-8a1af50b9338?w=600&h=600&fit=crop&q=80',
-    title: 'Night Dining',
-    category: 'Moments'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1513985248281-a7b0f8a8e8c1?w=600&h=600&fit=crop&q=80',
-    title: 'Kitchen Art',
-    category: 'Behind the Scenes'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1537909352847-f1cea42e09cb?w=600&h=600&fit=crop&q=80',
-    title: 'Gathering Moment',
-    category: 'Moments'
+    id: 'drinks',
+    num: '03',
+    icon: '🍹',
+    title: 'Coffee & Drinks',
+    amh: 'ቡና እና መጠጦች',
+    tagline: 'From the jebena to the bar — coffee, tej, fresh juices and cocktails poured with care.',
+    layout: 'showcase-tight',
+    accent: '#D98E32',
+    items: [
+      { title: 'Coffee Ceremony', cap: 'Roasted, ground and poured at your table' },
+      { title: 'Espresso & Macchiato', cap: 'House roast, strong and clean' },
+      { title: 'Classic Tej', cap: 'Golden honey wine' },
+      { title: 'Fresh Juices', cap: 'Mango, avocado & seasonal blends' },
+      { title: 'Signature Cocktails', cap: 'Mint, citrus and slow evenings' },
+      { title: 'Spiced Latte', cap: 'Cinnamon, cardamom & cream' },
+      { title: 'Mocktails', cap: 'Zero-proof, full flavor' },
+      { title: 'Soft Drinks & Water', cap: 'Cold and ready' }
+    ]
   }
 ];
 
 /**
- * Current lightbox state
+ * Flat list of image-bearing items, in display order (for the lightbox).
  */
+let galleryImages = [];
+let galleryImgIndex = 0;
 let currentGalleryIndex = 0;
 
+/** Minimal HTML escaper for rendered data */
+const escHtml = (str) => String(str ?? '').replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 /**
- * Initialize and render the gallery
+ * Renders a single tile.
+ */
+function galleryItemHtml(item, section, imgIndex) {
+  const hasImg = imgIndex >= 0 && item.src;
+
+  if (hasImg) {
+    return `
+      <figure class="gal-item gal-img" onclick="openGalleryLightbox(${imgIndex})" role="button" tabindex="0"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openGalleryLightbox(${imgIndex});}">
+        <img src="${escHtml(item.src)}" alt="${escHtml(item.title)}" loading="lazy" decoding="async">
+        <span class="gal-view">⤢</span>
+        <figcaption class="gal-cap">
+          <span class="gal-cap-title">${escHtml(item.title)}</span>
+          ${item.cap ? `<span class="gal-cap-sub">${escHtml(item.cap)}</span>` : ''}
+        </figcaption>
+      </figure>`;
+  }
+
+  return `
+    <div class="gal-item gal-ph" aria-label="${escHtml(item.title)} — photo coming soon">
+      <span class="gal-ph-icon">${section.icon}</span>
+      <div class="gal-ph-body">
+        <span class="gal-ph-title">${escHtml(item.title)}</span>
+        ${item.cap ? `<span class="gal-ph-cap">${escHtml(item.cap)}</span>` : ''}
+        <span class="gal-ph-note">Photo coming soon</span>
+      </div>
+    </div>`;
+}
+
+/**
+ * Renders one full chapter: header + grid.
+ */
+function gallerySectionHtml(section) {
+  const itemsHtml = section.items.map(item => {
+    if (!item.src) return galleryItemHtml(item, section, -1);
+    const idx = galleryImgIndex++;
+    galleryImages.push({
+      src: item.src,
+      title: item.title,
+      cap: item.cap || '',
+      section: section.title
+    });
+    return galleryItemHtml(item, section, idx);
+  }).join('');
+
+  return `
+    <section class="gal-section" id="gal-${section.id}" data-target="${section.id}" style="--acc: ${section.accent}">
+      <header class="gal-section-head">
+        <span class="gal-num" aria-hidden="true">${section.num}</span>
+        <div class="gal-head-text">
+          <span class="gal-eyebrow">${section.icon} <span>${escHtml(section.amh)}</span></span>
+          <h2 class="gal-title">${escHtml(section.title)}</h2>
+          <p class="gal-tagline">${escHtml(section.tagline)}</p>
+        </div>
+      </header>
+      <div class="gal-grid gal-layout-${section.layout}">${itemsHtml}</div>
+    </section>`;
+}
+
+/**
+ * Renders the sticky chapter quick-nav.
+ */
+function renderGalleryNav() {
+  const nav = document.getElementById('galleryNav');
+  if (!nav) return;
+  nav.innerHTML = GALLERY_SECTIONS.map(s => `
+    <a class="gn-pill" href="#gal-${s.id}" data-target="${s.id}">
+      <span class="gn-num">${s.num}</span>${escHtml(s.title)}
+    </a>`).join('');
+}
+
+/**
+ * Scrollspy — highlights the quick-nav pill for the section in view.
+ */
+function initGalleryScrollspy() {
+  const pills = document.querySelectorAll('.gn-pill');
+  if (!pills.length || !('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = entry.target.dataset.target;
+        pills.forEach(p => p.classList.toggle('active', p.dataset.target === target));
+      }
+    });
+  }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
+
+  document.querySelectorAll('.gal-section').forEach(sec => observer.observe(sec));
+}
+
+/**
+ * Initialize and render the gallery.
  */
 function initializeGallery() {
-  renderGalleryGrid();
-  setupGalleryEventListeners();
+  galleryImages = [];
+  galleryImgIndex = 0;
+  const grid = document.getElementById('galleryGrid');
+  if (!grid) return;
+
+  grid.innerHTML = GALLERY_SECTIONS.map(gallerySectionHtml).join('');
+  renderGalleryNav();
+  initGalleryScrollspy();
 }
 
-/**
- * Render gallery grid
- */
-function renderGalleryGrid() {
-  const galleryGrid = document.getElementById('galleryGrid');
-  if (!galleryGrid) return;
+/* ==========================================================================
+   LIGHTBOX
+   ========================================================================== */
 
-  galleryGrid.innerHTML = galleryData.map((item, index) => `
-    <div class="gallery-item" onclick="openGalleryLightbox(${index})">
-      <img 
-        src="${item.src}" 
-        alt="${item.title}" 
-        loading="lazy"
-        decoding="async"
-        data-category="${item.category}">
-      <div class="gallery-overlay">
-        <div class="gallery-icon">🖼️</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-/**
- * Open lightbox with specific image
- */
 function openGalleryLightbox(index) {
+  const item = galleryImages[index];
+  if (!item) return;
+
   currentGalleryIndex = index;
-  const modal = document.getElementById('galleryLightbox');
-  
+
+  let modal = document.getElementById('galleryLightbox');
   if (!modal) {
     createGalleryLightbox();
-    return openGalleryLightbox(index);
+    modal = document.getElementById('galleryLightbox');
   }
 
   updateGalleryLightbox();
@@ -215,77 +209,62 @@ function openGalleryLightbox(index) {
   document.body.style.overflow = 'hidden';
 }
 
-/**
- * Create lightbox modal if it doesn't exist
- */
 function createGalleryLightbox() {
   const modal = document.createElement('div');
   modal.id = 'galleryLightbox';
   modal.className = 'lightbox-modal';
   modal.innerHTML = `
-    <div class="lightbox-close" onclick="closeGalleryLightbox()">×</div>
-    <div class="lightbox-nav lightbox-prev" onclick="galleryNavigate(-1)">‹</div>
+    <div class="lightbox-close" onclick="closeGalleryLightbox()" aria-label="Close">×</div>
+    <div class="lightbox-nav lightbox-prev" onclick="galleryNavigate(-1)" aria-label="Previous">‹</div>
     <div class="lightbox-content">
-      <img id="galleryLbImg" src="" alt="Gallery Image">
+      <img id="galleryLbImg" src="" alt="">
     </div>
-    <div class="lightbox-nav lightbox-next" onclick="galleryNavigate(1)">›</div>
-    <div class="gallery-counter">
-      <span id="galleryCounter"></span>
+    <div class="lightbox-nav lightbox-next" onclick="galleryNavigate(1)" aria-label="Next">›</div>
+    <div class="lb-meta">
+      <div class="lb-meta-caption">
+        <span id="galleryLbTitle"></span>
+        <span id="galleryLbCap"></span>
+      </div>
+      <span class="gallery-counter"><span id="galleryCounter"></span></span>
     </div>
   `;
   document.body.appendChild(modal);
 
-  // Close on background click
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      closeGalleryLightbox();
-    }
+    if (e.target === modal) closeGalleryLightbox();
   });
 
-  // Keyboard navigation
   document.addEventListener('keydown', handleGalleryKeyboard);
 }
 
-/**
- * Update lightbox content
- */
 function updateGalleryLightbox() {
-  const item = galleryData[currentGalleryIndex];
+  const item = galleryImages[currentGalleryIndex];
+  if (!item) return;
+
   const imgElement = document.getElementById('galleryLbImg');
   const counter = document.getElementById('galleryCounter');
+  const titleEl = document.getElementById('galleryLbTitle');
+  const capEl = document.getElementById('galleryLbCap');
 
-  if (imgElement) {
-    imgElement.src = item.src;
-    imgElement.alt = item.title;
-  }
-
-  if (counter) {
-    counter.textContent = `${currentGalleryIndex + 1} / ${galleryData.length}`;
-  }
+  if (imgElement) { imgElement.src = item.src; imgElement.alt = item.title; }
+  if (counter) counter.textContent = `${currentGalleryIndex + 1} / ${galleryImages.length}`;
+  if (titleEl) titleEl.textContent = item.title;
+  if (capEl) capEl.textContent = item.cap;
 }
 
-/**
- * Navigate gallery
- */
 function galleryNavigate(direction) {
-  currentGalleryIndex = (currentGalleryIndex + direction + galleryData.length) % galleryData.length;
+  if (galleryImages.length === 0) return;
+  currentGalleryIndex = (currentGalleryIndex + direction + galleryImages.length) % galleryImages.length;
   updateGalleryLightbox();
 }
 
-/**
- * Handle keyboard navigation
- */
 function handleGalleryKeyboard(e) {
   if (!document.getElementById('galleryLightbox')?.classList.contains('active')) return;
-
   if (e.key === 'ArrowLeft') galleryNavigate(-1);
   if (e.key === 'ArrowRight') galleryNavigate(1);
   if (e.key === 'Escape') closeGalleryLightbox();
 }
 
-/**
- * Close lightbox
- */
 function closeGalleryLightbox() {
   const modal = document.getElementById('galleryLightbox');
   if (modal) {
@@ -293,12 +272,4 @@ function closeGalleryLightbox() {
     document.body.style.overflow = '';
   }
   document.removeEventListener('keydown', handleGalleryKeyboard);
-}
-
-/**
- * Setup event listeners for gallery
- */
-function setupGalleryEventListeners() {
-  // Gallery items already have onclick handlers
-  // This function can be expanded for additional interactions
 }

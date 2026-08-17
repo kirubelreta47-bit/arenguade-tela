@@ -10,19 +10,34 @@ async function handleReservationSubmit(e) {
   e.preventDefault();
 
   const form = e.target;
-  const inputs = form.querySelectorAll('input, select, textarea');
-  
+  const formData = new FormData(form);
+
   const reservationPayload = {
-    name: inputs[0]?.value || '',
-    phone: inputs[1]?.value || '',
-    date: inputs[2]?.value || '',
-    time: inputs[3]?.value || '',
-    guests: inputs[4]?.value || '',
-    occasion: inputs[5]?.value || '',
-    notes: inputs[6]?.value || ''
+    name: (formData.get('name') || '').toString().trim(),
+    phone: (formData.get('phone') || '').toString().trim(),
+    date: (formData.get('date') || '').toString().trim(),
+    time: (formData.get('time') || '').toString().trim(),
+    guests: (formData.get('guests') || '').toString().trim(),
+    occasion: (formData.get('occasion') || '').toString().trim(),
+    notes: (formData.get('notes') || '').toString().trim()
   };
 
-  const btn = form.querySelector('button');
+  if (!reservationPayload.name || !reservationPayload.phone || !reservationPayload.date || !reservationPayload.time || !reservationPayload.guests) {
+    const errorBanner = document.getElementById('resFormError');
+    if (errorBanner) {
+      errorBanner.innerText = 'Please fill in name, phone, date, time, and guests.';
+      errorBanner.style.display = 'block';
+    }
+    return;
+  }
+
+  const errorBanner = document.getElementById('resFormError');
+  if (errorBanner) {
+    errorBanner.style.display = 'none';
+    errorBanner.innerText = '';
+  }
+
+  const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
   const originalBtnText = btn ? btn.innerText : 'Reserve Table';
   
   if (btn) {
@@ -31,14 +46,28 @@ async function handleReservationSubmit(e) {
   }
 
   try {
-    const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/api/reservation`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reservationPayload)
-    });
-
+    let response;
     let respData = {};
+
+    try {
+      response = await fetch(getReservationUrl(false), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reservationPayload)
+      });
+    } catch (networkErr) {
+      // Local backend/proxy down → try production API so reservations still work in dev
+      const hostname = window.location.hostname;
+      const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.');
+      if (!isLocal) throw networkErr;
+
+      response = await fetch(getReservationUrl(true), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reservationPayload)
+      });
+    }
+
     try { 
       respData = await response.json(); 
     } catch (parseErr) {
@@ -63,12 +92,15 @@ async function handleReservationSubmit(e) {
       `;
     }
   } catch (err) {
-    const errorBanner = document.getElementById('resFormError');
+    const message = (err && err.message === 'Failed to fetch')
+      ? 'Cannot reach the reservation server. Make sure the backend is running, then try again.'
+      : (err.message || 'There was an error submitting your reservation. Please try again.');
+
     if (errorBanner) {
-      errorBanner.innerText = err.message || 'There was an error submitting your reservation. Please try again.';
+      errorBanner.innerText = message;
       errorBanner.style.display = 'block';
     } else {
-      alert(err.message || 'There was an error submitting your reservation. Please try again.');
+      alert(message);
     }
     
     if (btn) {
