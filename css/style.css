@@ -752,6 +752,10 @@
     }
 
     /* 3. ABOUT */
+    .about-text-content {
+      padding-left: 24px;
+    }
+
     .about-img-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -803,16 +807,16 @@
 
     @media (max-width: 768px) {
       .about-img-grid {
-        grid-template-columns: 1fr;
+        display: none !important;
       }
-      .about-img-stack img {
-        height: 200px;
+      .about-text-content {
+        padding-left: 0;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
       }
-      .about-img-tall {
-        min-height: 280px;
-      }
-      .about-img-tall img {
-        height: 280px;
+      .about-text-content .badge-row {
+        justify-content: center;
       }
     }
 
