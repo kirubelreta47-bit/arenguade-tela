@@ -31,6 +31,18 @@ function closeMenu() {
 }
 
 /**
+ * Triggers subtle minimalist page entrance animation
+ * @param {HTMLElement} el View element to animate
+ */
+function triggerViewAnimation(el) {
+  if (!el) return;
+  el.classList.remove('view-entering');
+  void el.offsetWidth; // Force reflow
+  el.classList.add('view-entering');
+  setTimeout(() => el.classList.remove('view-entering'), 460);
+}
+
+/**
  * Navigation Router
  * @param {string} viewId Target view ID
  */
@@ -58,6 +70,7 @@ function navigateTo(viewId) {
     if (overlay) {
       overlay.classList.add('active');
       overlay.scrollTop = 0;
+      triggerViewAnimation(overlay);
     }
     closeMenu();
     return;
@@ -72,12 +85,14 @@ function navigateTo(viewId) {
     fullGalleryPage.style.display = 'none';
     setFooterVisible(false);
     window.scrollTo(0, 0);
+    triggerViewAnimation(fullMenuPage);
   } else if (viewId === 'view-gallery') {
     mainPage.style.display = 'none';
     fullMenuPage.style.display = 'none';
     fullGalleryPage.style.display = 'block';
     setFooterVisible(false);
     window.scrollTo(0, 0);
+    triggerViewAnimation(fullGalleryPage);
   } else {
     mainPage.style.display = 'block';
     fullMenuPage.style.display = 'none';
@@ -96,6 +111,9 @@ function navigateTo(viewId) {
         top: offsetPosition,
         behavior: "smooth"
       });
+      triggerViewAnimation(el);
+    } else {
+      triggerViewAnimation(mainPage);
     }
   }
   closeMenu();
@@ -117,20 +135,24 @@ function initNavbarScroll() {
   });
 }
 
+let scrollObserver = null;
+
 /**
  * Intersection Observer for scroll animations with responsive margin
  */
 function initScrollAnimations() {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.05, rootMargin: '60px 0px 60px 0px' });
+  if (!scrollObserver) {
+    scrollObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          scrollObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '40px 0px 40px 0px' });
+  }
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal:not(.active)').forEach(el => scrollObserver.observe(el));
 }
 
 /**

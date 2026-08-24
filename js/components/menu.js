@@ -187,4 +187,5 @@ function switchFullTab(tabName) {
   } else {
     renderFullMenu();
   }
+  if (typeof initScrollAnimations === 'function') initScrollAnimations();
 }

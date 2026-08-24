@@ -228,15 +228,47 @@
       font-size: 11px;
     }
 
+    /* Minimalist View Page Transitions */
+    .view-entering {
+      animation: minimalistPageEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes minimalistPageEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.995);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(16px) scale(0.99);
+      will-change: opacity, transform;
     }
 
     .reveal.active {
       opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.8s ease var(--delay, 0s), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) var(--delay, 0s);
+      transform: translateY(0) scale(1);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s);
+    }
+
+    /* Minimalist Image & Card Micro-Interactions */
+    .luxury-card-media img,
+    .about-img-stack img,
+    .about-img-tall img,
+    .gal-card img {
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), filter 0.55s ease;
+      will-change: transform;
+    }
+
+    .about-img-stack img:hover,
+    .about-img-tall img:hover {
+      transform: scale(1.025);
+      filter: brightness(1.03);
     }
 
     /* Sleek Glass Effect */
@@ -848,25 +880,36 @@
     }
 
     .badge-row {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
-      margin-top: 32px;
+      margin-top: 28px;
+      width: 100%;
     }
 
     .badge {
       background: rgba(212, 175, 55, 0.05);
       color: var(--g);
       border: 1px solid rgba(212, 175, 55, 0.2);
-      padding: 6px 16px;
-      border-radius: 4px;
-      font-size: 11px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: clamp(10px, 2.8vw, 11.5px);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       font-weight: 600;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+      background: rgba(212, 175, 55, 0.12);
+      border-color: var(--g);
+      transform: translateY(-2px);
     }
 
     /* 4. SIGNATURE EXPERIENCE */
