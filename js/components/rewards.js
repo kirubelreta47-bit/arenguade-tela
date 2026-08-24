@@ -224,7 +224,7 @@ function renderEventsList() {
   let html = visibleEvents.map((e, index) => `
     <div class="event-card glass reveal" style="--delay: ${index * 0.1}s">
       <div style="font-size:40px; margin-bottom:10px;">${e.i}</div>
-      <h3 style="font-size:24px;">${e.t}</h3>
+      <h3 class="event-card-title">${e.t}</h3>
       <div><span class="event-pill">${e.s}</span></div>
       <p class="event-desc">${e.d}</p>
       <button class="btn btn-o btn-sm" onclick="navigateTo('view-reservations');">Book Table</button>
@@ -244,7 +244,7 @@ function renderEventsList() {
       hiddenHtml += `
         <div class="event-card glass reveal" style="--delay: ${(6 + index) * 0.1}s">
           <div style="font-size:40px; margin-bottom:10px;">${e.i}</div>
-          <h3 style="font-size:24px;">${e.t}</h3>
+          <h3 class="event-card-title">${e.t}</h3>
           <div><span class="event-pill">${e.s}</span></div>
           <p class="event-desc">${e.d}</p>
           <button class="btn btn-o btn-sm" onclick="navigateTo('view-reservations');">Book Table</button>
