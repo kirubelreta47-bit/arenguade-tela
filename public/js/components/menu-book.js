@@ -117,7 +117,6 @@
       // Desktop Next (2-page spread)
       if (currentSpreadIdx >= SPREADS.length - 1) return;
       isFlipping = true;
-      playPaperSound();
 
       const curr = SPREADS[currentSpreadIdx];
       const next = SPREADS[currentSpreadIdx + 1];
@@ -177,7 +176,6 @@
       // Mobile Prev (1 page at a time)
       if (mobileCurrentPage <= 1) return;
       isFlipping = true;
-      playPaperSound();
 
       const fromP = mobileCurrentPage;
       const toP = mobileCurrentPage - 1;
@@ -220,7 +218,6 @@
       // Desktop Prev (2-page spread)
       if (currentSpreadIdx <= 0) return;
       isFlipping = true;
-      playPaperSound();
 
       const curr = SPREADS[currentSpreadIdx];
       const prev = SPREADS[currentSpreadIdx - 1];
