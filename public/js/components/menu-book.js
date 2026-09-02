@@ -31,45 +31,7 @@
     return window.innerWidth <= 820 || (('ontouchstart' in window) && window.innerWidth < 1024 && window.matchMedia('(orientation: portrait)').matches);
   }
 
-  function playPaperSound() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      if (!window._menuAudioCtx) window._menuAudioCtx = new AudioCtx();
-      const ctx = window._menuAudioCtx;
-      if (ctx.state === 'suspended') ctx.resume();
 
-      const duration = 0.22;
-      const bufferSize = Math.floor(ctx.sampleRate * duration);
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const output = buffer.getChannelData(0);
-
-      for (let i = 0; i < bufferSize; i++) {
-        const progress = i / bufferSize;
-        const decay = Math.exp(-progress * 5.5);
-        output[i] = (Math.random() * 2 - 1) * decay * (0.8 + Math.sin(progress * 35) * 0.2);
-      }
-
-      const whiteNoise = ctx.createBufferSource();
-      whiteNoise.buffer = buffer;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1400, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + duration);
-      filter.Q.value = 1.1;
-
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.18, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-
-      whiteNoise.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-
-      whiteNoise.start();
-    } catch (e) {}
-  }
 
   function renderCurrentState() {
     const container = document.getElementById('bookSpreadContainer');
@@ -113,7 +75,7 @@
       // Mobile Next (1 page at a time)
       if (mobileCurrentPage >= TOTAL_PAGES) return;
       isFlipping = true;
-      playPaperSound();
+
 
       const fromP = mobileCurrentPage;
       const toP = mobileCurrentPage + 1;

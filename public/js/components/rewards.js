@@ -79,57 +79,7 @@ function drawWheel() {
   ctx.stroke();
 }
 
-/**
- * Web Audio Context Synthesizer helpers
- */
-async function initAudioContext() {
-  if (!window.audioCtx) {
-    window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (window.audioCtx.state === 'suspended') {
-    await window.audioCtx.resume();
-  }
-}
 
-function scheduleTickSound(time) {
-  try {
-    if (!window.audioCtx) return;
-    const osc = window.audioCtx.createOscillator();
-    const gain = window.audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(window.audioCtx.destination);
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(800, time);
-    osc.frequency.linearRampToValueAtTime(400, time + 0.05);
-    gain.gain.setValueAtTime(0.2, time);
-    gain.gain.linearRampToValueAtTime(0.01, time + 0.05);
-    osc.start(time);
-    osc.stop(time + 0.05);
-  } catch (err) {
-    console.error("Tick audio synthesizer notice:", err);
-  }
-}
-
-function scheduleWinSound(time) {
-  try {
-    if (!window.audioCtx) return;
-    const osc = window.audioCtx.createOscillator();
-    const gain = window.audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(window.audioCtx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, time);
-    osc.frequency.linearRampToValueAtTime(600, time + 0.1);
-    osc.frequency.linearRampToValueAtTime(800, time + 0.3);
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(0.3, time + 0.1);
-    gain.gain.linearRampToValueAtTime(0.01, time + 1.0);
-    osc.start(time);
-    osc.stop(time + 1.0);
-  } catch (err) {
-    console.error("Win audio synthesizer notice:", err);
-  }
-}
 
 /**
  * Executes spin wheel rotation and audio feedback
@@ -139,7 +89,6 @@ function scheduleWinSound(time) {
  */
 async function spinWheel() {
   if (isSpinning) return;
-  await initAudioContext();
   isSpinning = true;
 
   const resText = document.getElementById('spinResult');
@@ -177,20 +126,7 @@ async function spinWheel() {
     canvas.style.transform = `rotate(${wheelDeg}deg)`;
   }
 
-  const audioNow = window.audioCtx ? window.audioCtx.currentTime : 0;
-  const ticks = Math.floor((diff + (spins * 360)) / 20);
 
-  for (let i = 0; i < ticks; i++) {
-    const progress = i / ticks;
-    const timeProgress = 1 - Math.pow(1 - progress, 0.33);
-    if (window.audioCtx) {
-      scheduleTickSound(audioNow + (timeProgress * 4.5));
-    }
-  }
-
-  if (window.audioCtx) {
-    scheduleWinSound(audioNow + 4.5);
-  }
 
   setTimeout(() => {
     isSpinning = false;
