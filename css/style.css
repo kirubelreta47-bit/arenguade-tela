@@ -3550,15 +3550,21 @@
   text-align: center;
 }
 
-/* Mobile screens: Strictly ONE page at a time */
-@media (max-width: 768px) {
+/* Mobile screens (phones and small tablets): Strictly ONE page at a time */
+@media (max-width: 820px) {
   .menu-book-page-wrapper {
     padding: 82px 12px 25px;
+    touch-action: pan-y;
   }
 
   .book-spread-container {
     width: clamp(260px, 88vw, 380px) !important;
     height: clamp(370px, 64vh, 540px) !important;
+    touch-action: none !important;
+  }
+
+  .book-spread {
+    touch-action: none !important;
   }
 
   .spread-page-left,

@@ -1,10 +1,9 @@
 /* ==========================================================================
    ARENGUADE TILA - RESPONSIVE 3D MENU BOOK
-   - Desktop (> 768px): Starts closed (Cover Page 1), slides open to 2-page spreads.
-   - Mobile (<= 768px): Strictly ONE single page at a time (Page 1 -> 2 -> ... -> 10).
-   - Touch Swiping for Mobile Phones: Native TouchEvents with directional lock.
-   - Pointer Dragging for Desktop Mouse.
-   - Fully scrollable page, natural flow, no button clutter.
+   - Desktop (> 820px): Starts closed (Cover Page 1), slides open to 2-page spreads.
+   - Mobile (<= 820px): Strictly ONE single page at a time (Page 1 -> 2 -> ... -> 10).
+   - Universal Mobile Phone Swiping: Full-view touch detection, directional lock,
+     flick support, and OS cancel protection.
    ========================================================================== */
 
 (function () {
@@ -26,9 +25,10 @@
   let currentSpreadIdx = 0; // For desktop
   let mobileCurrentPage = 1; // For mobile (1 through 10)
   let isFlipping = false;
+  let gesturesInitialized = false;
 
   function isMobile() {
-    return window.innerWidth <= 768;
+    return window.innerWidth <= 820 || (('ontouchstart' in window) && window.innerWidth < 1024 && window.matchMedia('(orientation: portrait)').matches);
   }
 
   function playPaperSound() {
@@ -137,7 +137,7 @@
 
       void leaf.offsetWidth;
 
-      leaf.style.transition = 'transform 0.48s cubic-bezier(0.28, 0, 0.18, 1)';
+      leaf.style.transition = 'transform 0.46s cubic-bezier(0.28, 0, 0.18, 1)';
       leaf.style.transform = 'rotateY(-180deg)';
       if (leafFrontShadow) leafFrontShadow.style.opacity = '0.45';
       if (leafBackShadow) leafBackShadow.style.opacity = '0';
@@ -149,7 +149,7 @@
         leaf.style.transition = 'none';
         leaf.style.transform = 'rotateY(0deg)';
         isFlipping = false;
-      }, 500);
+      }, 480);
 
     } else {
       // Desktop Next (2-page spread)
@@ -206,7 +206,7 @@
   }
 
   /**
-   * Flip Backward
+   * Flip Backward (Fixed Realistic Page Flip Mechanics)
    */
   function menuBookPrev() {
     if (isFlipping) return;
@@ -239,7 +239,7 @@
 
       void leaf.offsetWidth;
 
-      leaf.style.transition = 'transform 0.5s cubic-bezier(0.28, 0, 0.18, 1)';
+      leaf.style.transition = 'transform 0.46s cubic-bezier(0.28, 0, 0.18, 1)';
       leaf.style.transform = 'rotateY(0deg)';
       if (leafFrontShadow) leafFrontShadow.style.opacity = '0';
       if (leafBackShadow) leafBackShadow.style.opacity = '0.35';
@@ -252,7 +252,7 @@
         leaf.style.transition = 'none';
         leaf.style.transform = 'rotateY(0deg)';
         isFlipping = false;
-      }, 520);
+      }, 480);
 
     } else {
       // Desktop Prev (2-page spread)
@@ -308,102 +308,106 @@
   }
 
   /**
-   * Setup Robust Gesture Detection (TouchEvents for Phones + Pointer for Mouse)
+   * Robust Gesture Engine for Phones (iOS & Android) & Desktop
    */
   function setupGestures() {
-    const stage = document.getElementById('bookSpreadContainer');
-    const bookSpread = document.getElementById('bookSpread');
-    if (!stage || !bookSpread) return;
+    if (gesturesInitialized) return;
 
-    // 1. DEDICATED TOUCH EVENT HANDLING FOR PHONES (iOS & Android)
+    const menuPage = document.getElementById('full-menu-page');
+    if (!menuPage) return;
+
+    gesturesInitialized = true;
+
+    // --- TOUCH EVENTS (Phones & Tablets) ---
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
-    let touchDiffX = 0;
-    let touchDiffY = 0;
-    let isHorizontalSwipe = false;
+    let touchHorizontalLock = false;
 
-    stage.addEventListener('touchstart', (e) => {
+    function handleTouchStart(e) {
       if (isFlipping) return;
       if (e.touches.length !== 1) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
       touchStartTime = Date.now();
-      touchDiffX = 0;
-      touchDiffY = 0;
-      isHorizontalSwipe = false;
-      bookSpread.classList.add('is-dragging');
-    }, { passive: true });
-
-    stage.addEventListener('touchmove', (e) => {
-      if (isFlipping || e.touches.length !== 1) return;
-      touchDiffX = e.touches[0].clientX - touchStartX;
-      touchDiffY = e.touches[0].clientY - touchStartY;
-
-      if (!isHorizontalSwipe && (Math.abs(touchDiffX) > 8 || Math.abs(touchDiffY) > 8)) {
-        if (Math.abs(touchDiffX) > Math.abs(touchDiffY)) {
-          isHorizontalSwipe = true;
-        }
-      }
-
-      // If user is swiping horizontally on phone, prevent page from scrolling
-      if (isHorizontalSwipe && e.cancelable) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    function handleTouchEnd() {
-      bookSpread.classList.remove('is-dragging');
-      if (isFlipping) return;
-
-      const absX = Math.abs(touchDiffX);
-      const absY = Math.abs(touchDiffY);
-
-      // Trigger flip if moved horizontally at least 25px
-      if (isHorizontalSwipe && absX >= 25 && absX > absY) {
-        if (touchDiffX < 0) {
-          menuBookNext(); // Swiped left
-        } else {
-          menuBookPrev(); // Swiped right
-        }
-      }
-
-      touchDiffX = 0;
-      touchDiffY = 0;
-      isHorizontalSwipe = false;
+      touchHorizontalLock = false;
     }
 
-    stage.addEventListener('touchend', handleTouchEnd, { passive: true });
-    stage.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    function handleTouchMove(e) {
+      if (isFlipping) return;
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const diffX = t.clientX - touchStartX;
+      const diffY = t.clientY - touchStartY;
+      const absX = Math.abs(diffX);
+      const absY = Math.abs(diffY);
 
-    // 2. POINTER EVENTS FOR DESKTOP MOUSE DRAG
+      // Lock to horizontal swipe if moving more horizontally than vertically
+      if (!touchHorizontalLock && absX > 10) {
+        if (absX > absY) {
+          touchHorizontalLock = true;
+        }
+      }
+
+      // Prevent native horizontal gesture interference
+      if (touchHorizontalLock && e.cancelable) {
+        e.preventDefault();
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (isFlipping) return;
+      const t = e.changedTouches ? e.changedTouches[0] : null;
+      if (!t) return;
+
+      const diffX = t.clientX - touchStartX;
+      const diffY = t.clientY - touchStartY;
+      const absX = Math.abs(diffX);
+      const absY = Math.abs(diffY);
+      const duration = Date.now() - touchStartTime;
+
+      // Swipe detected:
+      // 1. Horizontal movement dominates vertical movement
+      // 2. Either moved at least 25px, OR quick flick (at least 15px in < 350ms)
+      if (absX > absY && (absX >= 25 || (absX >= 15 && duration < 350))) {
+        if (diffX < 0) {
+          menuBookNext(); // Swipe left -> Next page
+        } else {
+          menuBookPrev(); // Swipe right -> Previous page
+        }
+      }
+
+      touchHorizontalLock = false;
+    }
+
+    // Attach to entire menuPage view so touch anywhere on screen registers
+    menuPage.addEventListener('touchstart', handleTouchStart, { passive: true });
+    menuPage.addEventListener('touchmove', handleTouchMove, { passive: false });
+    menuPage.addEventListener('touchend', handleTouchEnd, { passive: true });
+    menuPage.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+
+    // --- MOUSE DRAG FOR DESKTOP ---
     let mouseStartX = 0;
-    let isMouseDragging = false;
-    let mouseDiffX = 0;
+    let isMouseDown = false;
 
-    stage.addEventListener('mousedown', (e) => {
+    menuPage.addEventListener('mousedown', (e) => {
       if (isFlipping || e.button !== 0) return;
-      isMouseDragging = true;
+      if (e.target.closest('nav, button, a')) return;
+      isMouseDown = true;
       mouseStartX = e.clientX;
-      mouseDiffX = 0;
-      bookSpread.classList.add('is-dragging');
     });
 
-    window.addEventListener('mousemove', (e) => {
-      if (!isMouseDragging || isFlipping) return;
-      mouseDiffX = e.clientX - mouseStartX;
-    });
+    window.addEventListener('mouseup', (e) => {
+      if (!isMouseDown) return;
+      isMouseDown = false;
+      if (isFlipping) return;
 
-    window.addEventListener('mouseup', () => {
-      if (!isMouseDragging) return;
-      isMouseDragging = false;
-      bookSpread.classList.remove('is-dragging');
-
-      if (Math.abs(mouseDiffX) >= 30) {
-        if (mouseDiffX < 0) menuBookNext();
+      const diffX = e.clientX - mouseStartX;
+      if (Math.abs(diffX) >= 28) {
+        if (diffX < 0) menuBookNext();
         else menuBookPrev();
       }
-      mouseDiffX = 0;
     });
   }
 
