@@ -2,8 +2,8 @@
    ARENGUADE TILA - RESPONSIVE 3D MENU BOOK
    - Desktop (> 768px): Starts closed (Cover Page 1), slides open to 2-page spreads.
    - Mobile (<= 768px): Strictly ONE single page at a time (Page 1 -> 2 -> ... -> 10).
-   - Authentic 3D Page Turn: Zero abrupt image switching, exact physical faces.
-   - Strictly SLIDING/DRAGGING gesture required (no accidental single-touch/click flips).
+   - Touch Swiping for Mobile Phones: Native TouchEvents with directional lock.
+   - Pointer Dragging for Desktop Mouse.
    - Fully scrollable page, natural flow, no button clutter.
    ========================================================================== */
 
@@ -125,11 +125,8 @@
       const leafBackShadow = document.getElementById('leafBackShadow');
       const rightImg = document.getElementById('spreadRightImg');
 
-      // The leaf starts at 0deg on the right showing fromP
       leafFrontImg.src = MENU_PAGES[fromP - 1];
-      // When it flips to -180deg on the left, its back face will show toP
       leafBackImg.src = MENU_PAGES[toP - 1];
-      // Underneath, the static layer is already set to toP!
       rightImg.src = MENU_PAGES[toP - 1];
 
       leaf.style.transition = 'none';
@@ -140,7 +137,7 @@
 
       void leaf.offsetWidth;
 
-      leaf.style.transition = 'transform 0.5s cubic-bezier(0.28, 0, 0.18, 1)';
+      leaf.style.transition = 'transform 0.48s cubic-bezier(0.28, 0, 0.18, 1)';
       leaf.style.transform = 'rotateY(-180deg)';
       if (leafFrontShadow) leafFrontShadow.style.opacity = '0.45';
       if (leafBackShadow) leafBackShadow.style.opacity = '0';
@@ -152,7 +149,7 @@
         leaf.style.transition = 'none';
         leaf.style.transform = 'rotateY(0deg)';
         isFlipping = false;
-      }, 520);
+      }, 500);
 
     } else {
       // Desktop Next (2-page spread)
@@ -209,7 +206,7 @@
   }
 
   /**
-   * Flip Backward (Fixed Realistic Page Flip Mechanics)
+   * Flip Backward
    */
   function menuBookPrev() {
     if (isFlipping) return;
@@ -230,15 +227,8 @@
       const leafBackShadow = document.getElementById('leafBackShadow');
       const rightImg = document.getElementById('spreadRightImg');
 
-      // REALISTIC MECHANICS:
-      // Page toP is flipping back from the left to land on the right over fromP.
-      // When it lands on the right at 0deg, the face looking at user is leafFront.
-      // So leafFrontImg MUST be toP!
       leafFrontImg.src = MENU_PAGES[toP - 1];
-      // While it starts on the left at -180deg, its back is leafBackImg.
       leafBackImg.src = MENU_PAGES[fromP - 1];
-
-      // Underneath, the static layer holds fromP until toP covers it
       rightImg.src = MENU_PAGES[fromP - 1];
 
       leaf.style.transition = 'none';
@@ -255,8 +245,6 @@
       if (leafBackShadow) leafBackShadow.style.opacity = '0.35';
 
       setTimeout(() => {
-        // When landing completes at 0deg, rightImg is already covered by leafFront (toP).
-        // Update rightImg to toP before hiding leaf, ensuring ZERO image flicker!
         rightImg.src = MENU_PAGES[toP - 1];
         mobileCurrentPage = toP;
         renderCurrentState();
@@ -285,20 +273,13 @@
       const rightImg = document.getElementById('spreadRightImg');
 
       if (prev.type === 'cover') {
-        // Closing back onto cover:
-        // Left page (Page 2) lifts and closes over right page to become Cover Page 1
-        leafFrontImg.src = MENU_PAGES[0]; // Front face becomes Cover Page 1
-        leafBackImg.src = MENU_PAGES[curr.left - 1]; // Back face was Page 2
-        // Right under-layer stays curr.right until covered
+        leafFrontImg.src = MENU_PAGES[0];
+        leafBackImg.src = MENU_PAGES[curr.left - 1];
         rightImg.src = MENU_PAGES[curr.right - 1];
       } else {
-        // Turning backward between spreads (e.g. Pages 4-5 -> 2-3):
-        // Page 3 flips from left to right to land on the right stack
-        leafFrontImg.src = MENU_PAGES[prev.right - 1]; // Will show Page 3 when landing at 0deg
-        leafBackImg.src = MENU_PAGES[curr.left - 1]; // Shows Page 4 swinging away from left
-        // Underneath on the left, Page 2 is revealed immediately as Page 4 lifts!
+        leafFrontImg.src = MENU_PAGES[prev.right - 1];
+        leafBackImg.src = MENU_PAGES[curr.left - 1];
         leftImg.src = MENU_PAGES[prev.left - 1];
-        // Underneath on the right, stays Page 5 until Page 3 lands
         rightImg.src = MENU_PAGES[curr.right - 1];
       }
 
@@ -327,85 +308,108 @@
   }
 
   /**
-   * Setup Slide / Swipe Gestures
-   * Strictly requires sliding motion (> 35px). Clicking or tapping does NOT flip.
+   * Setup Robust Gesture Detection (TouchEvents for Phones + Pointer for Mouse)
    */
-  function setupSlideGestures() {
+  function setupGestures() {
     const stage = document.getElementById('bookSpreadContainer');
     const bookSpread = document.getElementById('bookSpread');
     if (!stage || !bookSpread) return;
 
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let dragDistance = 0;
-    let dragDirection = null;
-    let isHorizontalSlide = false;
+    // 1. DEDICATED TOUCH EVENT HANDLING FOR PHONES (iOS & Android)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let touchDiffX = 0;
+    let touchDiffY = 0;
+    let isHorizontalSwipe = false;
 
-    function onPointerDown(e) {
+    stage.addEventListener('touchstart', (e) => {
       if (isFlipping) return;
-      isDragging = true;
-      isHorizontalSlide = false;
-      dragStartX = e.clientX;
-      dragStartY = e.clientY;
-      dragDistance = 0;
-      dragDirection = null;
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      touchDiffX = 0;
+      touchDiffY = 0;
+      isHorizontalSwipe = false;
       bookSpread.classList.add('is-dragging');
-    }
+    }, { passive: true });
 
-    function onPointerMove(e) {
-      if (!isDragging || isFlipping) return;
+    stage.addEventListener('touchmove', (e) => {
+      if (isFlipping || e.touches.length !== 1) return;
+      touchDiffX = e.touches[0].clientX - touchStartX;
+      touchDiffY = e.touches[0].clientY - touchStartY;
 
-      const diffX = e.clientX - dragStartX;
-      const diffY = e.clientY - dragStartY;
+      if (!isHorizontalSwipe && (Math.abs(touchDiffX) > 8 || Math.abs(touchDiffY) > 8)) {
+        if (Math.abs(touchDiffX) > Math.abs(touchDiffY)) {
+          isHorizontalSwipe = true;
+        }
+      }
 
-      if (!isHorizontalSlide && (Math.abs(diffX) > 10 || Math.abs(diffY) > 10)) {
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-          isHorizontalSlide = true;
+      // If user is swiping horizontally on phone, prevent page from scrolling
+      if (isHorizontalSwipe && e.cancelable) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    function handleTouchEnd() {
+      bookSpread.classList.remove('is-dragging');
+      if (isFlipping) return;
+
+      const absX = Math.abs(touchDiffX);
+      const absY = Math.abs(touchDiffY);
+
+      // Trigger flip if moved horizontally at least 25px
+      if (isHorizontalSwipe && absX >= 25 && absX > absY) {
+        if (touchDiffX < 0) {
+          menuBookNext(); // Swiped left
         } else {
-          isDragging = false;
-          bookSpread.classList.remove('is-dragging');
-          return;
+          menuBookPrev(); // Swiped right
         }
       }
 
-      if (isHorizontalSlide) {
-        dragDistance = diffX;
-        if (diffX < -15) {
-          dragDirection = 'next';
-        } else if (diffX > 15) {
-          dragDirection = 'prev';
-        }
-      }
+      touchDiffX = 0;
+      touchDiffY = 0;
+      isHorizontalSwipe = false;
     }
 
-    function onPointerUp() {
-      if (!isDragging) return;
-      isDragging = false;
+    stage.addEventListener('touchend', handleTouchEnd, { passive: true });
+    stage.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+
+    // 2. POINTER EVENTS FOR DESKTOP MOUSE DRAG
+    let mouseStartX = 0;
+    let isMouseDragging = false;
+    let mouseDiffX = 0;
+
+    stage.addEventListener('mousedown', (e) => {
+      if (isFlipping || e.button !== 0) return;
+      isMouseDragging = true;
+      mouseStartX = e.clientX;
+      mouseDiffX = 0;
+      bookSpread.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDragging || isFlipping) return;
+      mouseDiffX = e.clientX - mouseStartX;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isMouseDragging) return;
+      isMouseDragging = false;
       bookSpread.classList.remove('is-dragging');
 
-      if (isHorizontalSlide && Math.abs(dragDistance) >= 35) {
-        if (dragDirection === 'next') {
-          menuBookNext();
-        } else if (dragDirection === 'prev') {
-          menuBookPrev();
-        }
+      if (Math.abs(mouseDiffX) >= 30) {
+        if (mouseDiffX < 0) menuBookNext();
+        else menuBookPrev();
       }
-
-      dragDistance = 0;
-      dragDirection = null;
-      isHorizontalSlide = false;
-    }
-
-    stage.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
+      mouseDiffX = 0;
+    });
   }
 
   function initMenuBook() {
     renderCurrentState();
-    setupSlideGestures();
+    setupGestures();
   }
 
   // Handle window resizing / rotation between desktop & mobile modes
