@@ -81,11 +81,14 @@ function navigateTo(viewId) {
 
   if (viewId === 'view-full-menu') {
     mainPage.style.display = 'none';
-    fullMenuPage.style.display = 'block';
+    fullMenuPage.style.display = 'flex';
     fullGalleryPage.style.display = 'none';
     setFooterVisible(false);
     window.scrollTo(0, 0);
     triggerViewAnimation(fullMenuPage);
+    if (typeof window.initMenuBook === 'function') {
+      window.initMenuBook();
+    }
   } else if (viewId === 'view-gallery') {
     mainPage.style.display = 'none';
     fullMenuPage.style.display = 'none';

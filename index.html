@@ -476,22 +476,53 @@
 
   </div>
 
-  <!-- FULL MENU PAGE -->
-  <!-- FULL MENU PAGE -->
-  <div id="full-menu-page"
-    style="display: none; padding: 100px 5%; min-height: 100vh; background: #0B0E14; color: #FFFFFF; font-family: 'Poppins', sans-serif;">
+  <!-- FULL MENU PAGE: 3D REAL FLIPBOOK SPREAD -->
+  <div id="full-menu-page" class="menu-book-page-wrapper" style="display: none;">
 
+    <!-- 3D Open 2-Page Book Stage (Centered) -->
+    <div class="menu-spread-stage" id="menuSpreadStage">
+      <div class="book-spread-container" id="bookSpreadContainer">
+        <div class="book-spread" id="bookSpread">
+          <!-- Left Page -->
+          <div class="spread-page spread-page-left" id="spreadLeftPage">
+            <img src="/menu-pages/page-2.jpg" alt="Left Page" id="spreadLeftImg" class="spread-img">
+            <div class="spread-spine-shadow left-shadow"></div>
+            <div class="spread-edge-crease left-crease"></div>
+          </div>
 
-    <div class="container" style="max-width: 1200px;">
-      <div class="text-center">
-        <h2 class="gold mb-1 section-title" style="font-family: 'Cormorant Garamond', serif;">Our Complete Menu</h2>
-        <p style="color: #9ca3af;">Explore our full selection of dishes and beverages.</p>
+          <!-- Central Book Spine -->
+          <div class="spread-center-spine" id="spreadCenterSpine"></div>
+
+          <!-- Right Page -->
+          <div class="spread-page spread-page-right" id="spreadRightPage">
+            <img src="/menu-pages/page-1.jpg" alt="Right Page" id="spreadRightImg" class="spread-img">
+            <div class="spread-spine-shadow right-shadow"></div>
+            <div class="spread-edge-crease right-crease"></div>
+          </div>
+
+          <!-- 3D Flipping Leaf (Flips across spine) -->
+          <div class="spread-flipping-leaf" id="spreadFlippingLeaf">
+            <div class="leaf-face leaf-front" id="leafFront">
+              <img src="/menu-pages/page-1.jpg" alt="Leaf Front" id="leafFrontImg" class="spread-img">
+              <div class="leaf-shadow" id="leafFrontShadow"></div>
+            </div>
+            <div class="leaf-face leaf-back" id="leafBack">
+              <img src="/menu-pages/page-2.jpg" alt="Leaf Back" id="leafBackImg" class="spread-img">
+              <div class="leaf-shadow" id="leafBackShadow"></div>
+            </div>
+          </div>
+        </div>
       </div>
-          <div class="luxury-tab-wrap" id="fullMenuTabs">
-        <!-- JS Populated -->
+    </div>
+
+    <!-- Centered Status & Hint below book (No buttons, purely slide-driven) -->
+    <div class="menu-book-controls-wrap">
+      <div class="menu-book-page-counter">
+        <span id="menuBookCurrentPage">Welcome</span> · <span id="menuBookTotalPages">10 Pages</span>
       </div>
-      <div class="full-menu-sections" id="fullMenuGrid">
-        <!-- JS Populated -->
+
+      <div class="menu-book-hint">
+        Slide or swipe horizontally to open & flip pages
       </div>
     </div>
   </div>
@@ -613,6 +644,7 @@
   <script src="/js/utils/helpers.js"></script>
   <script src="/js/components/modal.js"></script>
   <script src="/js/components/menu.js"></script>
+  <script src="/js/components/menu-book.js"></script>
   <script src="/js/components/reservation.js"></script>
   <script src="/js/components/rewards.js"></script>
   <script src="/js/components/gallery.js"></script>

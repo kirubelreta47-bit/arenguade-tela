@@ -3294,3 +3294,286 @@
     padding: 10px 16px;
   }
 }
+
+/* ==========================================================================
+   3D REAL MENU BOOK (SCROLLABLE PAGE, SLIDE-TO-FLIP, COVER & SPREAD DYNAMICS)
+   ========================================================================== */
+.menu-book-page-wrapper {
+  background: radial-gradient(circle at 50% 30%, #131b28 0%, #070a10 70%, #020406 100%);
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto; /* Fully scrollable naturally */
+  padding: 95px 16px 45px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 3D Book Stage */
+.menu-spread-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 2500px;
+  width: 100%;
+  margin: 15px auto;
+}
+
+.book-spread-container {
+  position: relative;
+  height: clamp(360px, 65vh, 530px);
+  width: clamp(520px, calc(65vh * 1.486), 820px);
+  perspective: 2500px;
+  user-select: none;
+  touch-action: pan-y;
+  transition: width 0.45s cubic-bezier(0.2, 0, 0, 1), height 0.45s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Closed Cover State (Page 1 Welcome) */
+.book-spread-container.is-closed-cover {
+  width: clamp(270px, calc(65vh * 0.743), 410px);
+}
+
+.book-spread {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 
+    0 25px 65px -10px rgba(0, 0, 0, 0.95),
+    0 0 45px rgba(212, 175, 55, 0.12),
+    inset 0 0 2px rgba(255, 255, 255, 0.15);
+  background: #101724;
+  transform-style: preserve-3d;
+  cursor: grab;
+}
+
+.book-spread.is-dragging {
+  cursor: grabbing;
+}
+
+/* Left & Right Pages */
+.spread-page {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #1B2A3A;
+  transition: flex 0.45s cubic-bezier(0.2, 0, 0, 1), opacity 0.3s ease;
+}
+
+.spread-page-left {
+  border-radius: 8px 0 0 8px;
+}
+
+.spread-page-right {
+  border-radius: 0 8px 8px 0;
+}
+
+/* In closed cover mode, right page is full cover and left page is tucked */
+.book-spread-container.is-closed-cover .spread-page-left {
+  display: none;
+}
+
+.book-spread-container.is-closed-cover .spread-page-right {
+  border-radius: 8px;
+  width: 100%;
+}
+
+.book-spread-container.is-closed-cover .spread-center-spine {
+  display: none;
+}
+
+.spread-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+  background: #1B2A3A;
+}
+
+/* Central Spine Binding */
+.spread-center-spine {
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(to right, 
+    rgba(0, 0, 0, 0.85) 0%, 
+    rgba(212, 175, 55, 0.25) 50%, 
+    rgba(0, 0, 0, 0.85) 100%);
+  position: relative;
+  z-index: 15;
+  box-shadow: 0 0 10px rgba(0,0,0,0.9);
+  flex-shrink: 0;
+}
+
+/* Spine Shading & Outer Crease */
+.spread-spine-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 45px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.spread-spine-shadow.left-shadow {
+  right: 0;
+  background: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.spread-spine-shadow.right-shadow {
+  left: 0;
+  background: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.spread-edge-crease {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(212, 175, 55, 0.35);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.spread-edge-crease.left-crease {
+  left: 0;
+}
+
+.spread-edge-crease.right-crease {
+  right: 0;
+}
+
+/* 3D Flipping Leaf */
+.spread-flipping-leaf {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  z-index: 30;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.book-spread-container.is-closed-cover .spread-flipping-leaf {
+  left: 0;
+  width: 100%;
+}
+
+.leaf-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  background: #1B2A3A;
+}
+
+.leaf-front {
+  border-radius: 0 8px 8px 0;
+  transform: rotateY(0deg);
+}
+
+.leaf-back {
+  border-radius: 8px 0 0 8px;
+  transform: rotateY(180deg);
+}
+
+.leaf-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 8;
+}
+
+/* ==========================================================================
+   CENTERED STATUS BADGE & SLIDE HINT (NO PREV/NEXT BUTTONS)
+   ========================================================================== */
+.menu-book-controls-wrap {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.menu-book-page-counter {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  padding: 6px 20px;
+  background: rgba(14, 19, 30, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+  text-align: center;
+}
+
+.menu-book-page-counter span {
+  color: #E2B755;
+}
+
+.menu-book-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+/* Mobile screens: Strictly ONE page at a time */
+@media (max-width: 768px) {
+  .menu-book-page-wrapper {
+    padding: 82px 12px 25px;
+  }
+
+  .book-spread-container {
+    width: clamp(260px, 88vw, 380px) !important;
+    height: clamp(370px, 64vh, 540px) !important;
+  }
+
+  .spread-page-left,
+  .spread-center-spine {
+    display: none !important;
+  }
+
+  .spread-page-right {
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+
+  .spread-flipping-leaf {
+    left: 0 !important;
+    width: 100% !important;
+  }
+
+  .leaf-front,
+  .leaf-back {
+    border-radius: 8px !important;
+  }
+}
+
